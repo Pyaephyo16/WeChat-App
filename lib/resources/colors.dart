@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+
+
+const PRIMARY_COLOR = Color(0xFF40e651);
+const APP_BAR_BACKGROUND_COLOR = Color(0xFFededed);
+const CHAT_HEAD_SUBTITLE_COLOR = Color(0xFFc1c1c1);
+const UNSELECTED_ICON_COLOR = Color(0xFF757575);
+const CONSERVATION_TEXTFIELD_CONTAINER_COLOR = Color(0xFFe6e6e7);
+const TEXTFIELD_BG_COLOR = Color(0xFFf5f5f5);
+const TEXTFIELD_BORDER_COLOR = Color(0xd8d8d8);
+const TEXTFIELD_ICON_COLOR = Color(0xFF585858);
+const TEXT_BACKGROUND_COLOR = Color(0xFFf3f3f3);
+const CONTACT_SEARCH_TEXT_COLOR = Color(0xFFafafb3);
+const CONTACT_ROW_ICON_COLOR = Color(0xFFcbcbcb);
+const CONTACT_PAGE_BG_COLOR = Color(0xFFf3f3f3);
+const ME_TAB_PROFILE_BG_COLOR  = Color(0xff7c94b6);
+const COMMENT_TEXT_COLOR = Color(0xFF4b4b4b);
+const PHOTO_VIDEO_COLOR = Color(0xFF47bd62);
+const TAG_PEOPLE_COLOR = Color(0xFF1778f3);
+const FEELING_ACTIVITY_COLOR = Color(0xFFf6b829);
+const CHECK_IN_COLOR = Color(0xFFf3543c);
+const LIVE_VIDEO_COLOR = Color(0xFFf9254d);
+const BACKGROUND_AA_COLOR = Color(0xFF43bca9);
+const CAMERA_COLOR = Color(0xFF439dfb);
