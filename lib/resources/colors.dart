@@ -22,3 +22,7 @@ const CHECK_IN_COLOR = Color(0xFFf3543c);
 const LIVE_VIDEO_COLOR = Color(0xFFf9254d);
 const BACKGROUND_AA_COLOR = Color(0xFF43bca9);
 const CAMERA_COLOR = Color(0xFF439dfb);
+const SIGNUP_BTM_COLOR = Color(0xFF2c2c2c);
+const DISABLED_BTN_COLOR = Color(0xFF2e2e2e);
+const TERMS_OF_SERVICE_COLOR = Color(0xFF828c97);
+const PRIVACY_PAGE_BG_COLOR = Color(0xFF191919);

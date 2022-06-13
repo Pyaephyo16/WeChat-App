@@ -48,33 +48,23 @@ class HomePage extends StatelessWidget {
               HomePageBloc bloc = Provider.of(context,listen: false);
               bloc.userSelectTab(index);
             },
-            items: [
+            items:const [
               BottomNavigationBarItem(
-                icon: Badge(
-                  badgeContent: Text("2",
-                  style: TextStyle(
-                    color: Colors.white
-                    ),),
-                  //child:const Icon(Icons.chat_outlined,size: MARGIN_SIZE_FOR_ICON,),
-                  child: FaIcon(FontAwesomeIcons.commentDots),
-                  ),
+                icon: FaIcon(FontAwesomeIcons.commentDots),
                 label: CHAT_TAB,
                 ),
 
               BottomNavigationBarItem(
-                //icon:  Icon(Icons.person_add_alt,size: MARGIN_SIZE_FOR_ICON,),
                 icon: FaIcon(FontAwesomeIcons.addressBook),
                 label: CONTACT_TAB,
                 ),
 
               BottomNavigationBarItem(
-                //icon: Icon(Icons.newspaper_rounded,size: MARGIN_SIZE_FOR_ICON,),
                 icon: FaIcon(FontAwesomeIcons.eye),
                 label: DISCOVER_TAB,
                 ),
 
               BottomNavigationBarItem(
-                //icon: Icon(Icons.person_outline_outlined,size: MARGIN_SIZE_FOR_ICON,),
                 icon: FaIcon(FontAwesomeIcons.user),
                 label: ME_TAB,
                 ),

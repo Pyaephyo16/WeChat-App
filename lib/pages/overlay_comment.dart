@@ -3,9 +3,9 @@ import 'package:we_chat_app/resources/colors.dart';
 import 'package:we_chat_app/resources/dimens.dart';
 import 'package:we_chat_app/resources/strings.dart';
 
-class TutorialOverlay extends ModalRoute{
+class OverlayComment extends ModalRoute{
 
-    String? commentTyped = null;
+    String? commentTyped;
 
   @override
   Duration get transitionDuration => Duration(milliseconds: 500);
@@ -40,45 +40,46 @@ class TutorialOverlay extends ModalRoute{
   }
 
   Widget _buildOverlayContent(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-           Padding(
-             padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1),
-             child: Row(
-               children: [
-                 Expanded(
-                   child: TextField(
-                     onChanged: (text){
-                       commentTyped = text;
-                     },
-                      style:const TextStyle(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+         Padding(
+           padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1,),
+           child: Row(
+             children: [
+               Expanded(
+                 child: TextField(
+                  autofocus: true,
+                   onChanged: (text){
+                     commentTyped = text;
+                   },
+                    style:const TextStyle(
+                      color: Colors.white,
+                      fontSize: TEXT_MEDIUM_1X,
+                    ),
+                    decoration: const InputDecoration(
+                      focusColor: PRIMARY_COLOR,
+                      hintText: WRITE_MESSAGE_TEXT,
+                           hintStyle: TextStyle(
                         color: Colors.white,
                         fontSize: TEXT_MEDIUM_1X,
+                        fontWeight: FontWeight.w400,
                       ),
-                      decoration: const InputDecoration(
-                        focusColor: PRIMARY_COLOR,
-                        hintText: WRITE_MESSAGE_TEXT,
-                             hintStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: TEXT_MEDIUM_1X,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        ),
-                    ),
-                 ),
-                 IconButton(
-                   onPressed: (){
-                     Navigator.pop(context,commentTyped);
-                   },
-                    icon: const Icon(Icons.send,size: MARGIN_SIZE_FOR_ICON,color: PRIMARY_COLOR,),
-                    )
-               ],
-             ),
+                      ),
+                  ),
+               ),
+               IconButton(
+                 onPressed: (){
+                   Navigator.pop(context,commentTyped);
+                 },
+                  icon: const Icon(Icons.send,size: MARGIN_SIZE_FOR_ICON,color: PRIMARY_COLOR,),
+                  )
+             ],
            ),
-        ],
-      ),
+         ),
+         Container(height: MediaQuery.of(context).size.height * 0.36,)
+      ],
     );
   }
 

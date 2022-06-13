@@ -1,4 +1,5 @@
 import 'package:azlistview/azlistview.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:we_chat_app/blocs/contact_tab_bloc.dart';
@@ -108,7 +109,7 @@ class ContactSection extends StatelessWidget {
       //      fontWeight: FontWeight.w500,
       //    )
       //  ),
-      indexBarMargin: EdgeInsets.only(right: MARGIN_MEDIUM_1),
+      indexBarMargin:const EdgeInsets.only(right: MARGIN_MEDIUM_1),
         itemBuilder: (BuildContext context,int index){
           final tag = user[index].getSuspensionTag();    
        final offStage = !user[index].isShowSuspension;
@@ -197,7 +198,7 @@ class ContactPeopleShowView extends StatelessWidget {
                child: Padding(
                  padding: const EdgeInsets.only(left: MARGIN_FOR_CONTACT_NAME_TITLE),
                  child: Text("${tag}",
-                 style: TextStyle(
+                 style:const TextStyle(
                    color: UNSELECTED_ICON_COLOR,
                    fontSize: MARGIN_MEDIUM_2X,
                    fontWeight: FontWeight.bold,
@@ -212,7 +213,7 @@ class ContactPeopleShowView extends StatelessWidget {
                image: user[index].person.image ?? "",
                 isChatPage: true,
                ),
-               SizedBox(width: MARGIN_MEDIUM,),
+              const SizedBox(width: MARGIN_MEDIUM,),
                Expanded(
                  child: Column(
                    crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,8 +226,10 @@ class ContactPeopleShowView extends StatelessWidget {
                          fontSize: TEXT_LARGE,
                        ),
                      ),
-                     SizedBox(height: MARGIN_MEDIUM_1,),
-                     DivideLineView(),
+                    const SizedBox(height: MARGIN_MEDIUM_1,),
+                     DivideLineView(
+                      isContactPage: true,
+                     ),
                    ],
                  ),
                )
@@ -249,29 +252,29 @@ class ContactRowView extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: CONTACT_ICON_ROW_CONTAINER_HEIGHT,
-      decoration: BoxDecoration(
+      decoration:const BoxDecoration(
         border: Border.symmetric(horizontal: BorderSide(color: CONTACT_ROW_ICON_COLOR)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ContactMenuIconView(
-            icon: Icon(Icons.person_add_alt,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
+            icon:const Icon(Icons.person_add_alt,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
             title: NEW_FRIEND_TEXT,
           ),
           VerticalLineView(),
           ContactMenuIconView(
-            icon: Icon(Icons.people_alt_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
+            icon:const Icon(Icons.people_alt_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
             title: GROUP_CHATS,
           ),
           VerticalLineView(),
           ContactMenuIconView(
-            icon: Icon(Icons.bookmarks_sharp,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
+            icon:const Icon(Icons.bookmarks_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
             title: TAG_TEXT,
           ),
           VerticalLineView(),
           ContactMenuIconView(
-            icon: Icon(Icons.book_sharp,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
+            icon:const Icon(Icons.book_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
             title: OFFICAL_ACCOUNTS,
           ),
         ],
@@ -305,7 +308,7 @@ class ContactMenuIconView extends StatelessWidget {
         icon,
         Text(title,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style:const TextStyle(
           color: CHAT_HEAD_SUBTITLE_COLOR,
           fontSize: TEXT_MEDIUM_1,
           fontWeight: FontWeight.w500,
@@ -328,30 +331,30 @@ class SearchButtonView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-     padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1),
-     margin: EdgeInsets.only(top: MARGIN_SMALL,left: MARGIN_MEDIUM_1,right: MARGIN_MEDIUM_1),
+     padding:const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1),
+     margin:const EdgeInsets.only(top: MARGIN_SMALL,left: MARGIN_MEDIUM_1,right: MARGIN_MEDIUM_1),
      width: MediaQuery.of(context).size.width,
      height:  CONTACT_NAME_LIST_TITLE_CONTAINGER_HEIGHT,
      clipBehavior: Clip.antiAlias,
      decoration: BoxDecoration(
-       borderRadius: BorderRadius.circular(6),
+       borderRadius: BorderRadius.circular(MARGIN_SMALL),
        color: CHAT_HEAD_SUBTITLE_COLOR,
      ),
       child: Center(
         child: IntrinsicWidth(
           child: TextField(
            textAlignVertical: TextAlignVertical.center,
-            style: TextStyle(
+            style:const TextStyle(
               color: UNSELECTED_ICON_COLOR,
-              fontSize: 18,
+              fontSize: TEXT_MEDIUM_1X,
             ),
             onChanged: (text){
               search(text);
             },
-            decoration: InputDecoration(
+            decoration:const InputDecoration(
               border: InputBorder.none,
               prefixIcon: Icon(Icons.search),
-              hintText: "Search",
+              hintText: SEARCH_TEXT,
               hintStyle: TextStyle(
                     fontSize: TEXT_MEDIUM_1X,
                     fontWeight: FontWeight.w400,

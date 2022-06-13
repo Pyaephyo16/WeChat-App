@@ -20,42 +20,42 @@ const Duration ANIMATION_DURATION_FOR_ADD = const Duration(milliseconds: 600);
 
  List<ConservationFunIconVO> icons = [
 ConservationFunIconVO(
-  icon:const Icon(Icons.folder,size: 28,),
+  icon:const Icon(Icons.folder,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
   title: FILE_ICON_TEXT,
 ),
 
 ConservationFunIconVO(
-  icon:const Icon(Icons.camera_alt_outlined,size: 28,),
+  icon:const Icon(Icons.camera_alt_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
   title: CAMERA_ICON_TEXT,
 ),
 
 ConservationFunIconVO(
-  icon:const Icon(Icons.video_call_outlined,size: 28,),
+  icon:const Icon(Icons.video_call_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
   title: VIDEO_CALL_ICON_TEXT,
 ),
 
 ConservationFunIconVO(
-  icon:const Icon(Icons.phone,size: 28,),
+  icon:const Icon(Icons.phone,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
   title: VOICE_CALL_ICON_TEXT,
 ),
 
 ConservationFunIconVO(
-  icon:const Icon(Icons.location_on_outlined,size: 28,),
+  icon:const Icon(Icons.location_on_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
   title: LOCATION_ICON_TEXT,
 ),
 
 ConservationFunIconVO(
-  icon:const Icon(Icons.file_present_sharp,size: 28,),
+  icon:const Icon(Icons.file_present_sharp,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
   title: RED_PACKET_ICON_TEXT,
 ),
 
 ConservationFunIconVO(
-  icon:const Icon(Icons.compare_arrows,size: 28,),
+  icon:const Icon(Icons.compare_arrows,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
   title: TRANSFER_ICON_TEXT,
 ),
 
 ConservationFunIconVO(
-  icon:const Icon(Icons.mic_none_rounded,size: 28,),
+  icon:const Icon(Icons.mic_none_rounded,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
   title: VOICE_INPUT_ICON_TEXT,
 ),
 ];
@@ -125,7 +125,6 @@ class ConservationPage extends StatelessWidget {
                    return TextFieldView(
                      msgController: bloc.msgController,
                      userText: bloc.userText,
-                      //cameraPhoto: bloc.cameraPhoto,
                       chooseFile: bloc.pickedFile,
                     typeData: (text){
                    ConservationPageBloc _changeBloc = Provider.of(context,listen: false);
@@ -161,7 +160,6 @@ class ConservationPage extends StatelessWidget {
                  if(cameraImage !=null){
                     ConservationPageBloc bloc = Provider.of(context,listen: false);
                     final cameraFileType = p.extension(cameraImage.path);
-                    //bloc.cameraImageChosen(File(cameraImage.path));
                     bloc.fileChosen(File(cameraImage.path),cameraFileType);
                  }
               }
@@ -199,37 +197,41 @@ class ChosenPhotoView extends StatelessWidget {
                   color: Colors.white,
                   child: Row(
      children: [
-       Text(YOUR_CHOOSE_PHOTO_TEXT,
-       style: TextStyle(
-         color: PRIMARY_COLOR,
-         fontSize: TEXT_MEDIUM_1X,
-         fontWeight: FontWeight.bold,
-       ),),
-       Spacer(),
        Container(
-         width: CHOOSEN_PHOTO_WIDTH,
+        margin:const EdgeInsets.only(left: MARGIN_FOR_CONTACT_NAME_TITLE),
+         width: (fileType == "mp4") ? CONSERVATION_SEND_VIDEO_WIDTH : CHOOSEN_PHOTO_WIDTH,
          height: CHOOSEN_PHOTO_HEIGHT,
          clipBehavior: Clip.antiAlias,
          decoration: BoxDecoration(
            borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
          ),
-         child: ( (fileType == "jpg" || fileType == "png" || fileType == "jpeg" || fileType == ".jpg")) ? Image.file(pickedFile ?? File(''),
-         fit: BoxFit.cover,
-         )
-         : (fileType == "mp4") ? FlickVideoPlayer(flickManager: flickManager!): Container(),
+        //  child: (fileType == "jpg" || fileType == "png" || fileType == "jpeg" || fileType == ".jpg" || fileType == "gif") ? Image.file(pickedFile ?? File(''),
+        //  fit: BoxFit.cover,
+        //  )
+        //  : (fileType == "mp4") ? FlickVideoPlayer(flickManager: flickManager!): Container(),
+        child: chooseFileShow(fileType ?? "", pickedFile, flickManager),
        ),
-       SizedBox(width: MARGIN_MEDIUM,),
+      const SizedBox(width: MARGIN_MEDIUM,),
        IconButton(
          onPressed: (){
            removePhoto();
          },
-          icon: Icon(Icons.cancel_outlined,size: MARGIN_SIZE_FOR_ICON,color: Colors.red,)
+          icon:const Icon(Icons.cancel_outlined,size: MARGIN_SIZE_FOR_ICON,color: Colors.red,)
           ),
      ],
      ),
     )
     );
   }
+
+
+  Widget chooseFileShow(String fileType,File? pickedFile,FlickManager? flickManager){
+    return (fileType == "jpg" || fileType == "png" || fileType == "jpeg" || fileType == ".jpg" || fileType == "gif") ? Image.file(pickedFile ?? File(''),
+         fit: BoxFit.cover,
+         )
+         : (fileType == "mp4") ? FlickVideoPlayer(flickManager: flickManager!): Container();
+  }
+
 }
 
 class AddMoreIconView extends StatelessWidget {
@@ -250,11 +252,12 @@ class AddMoreIconView extends StatelessWidget {
       height: (isAddTap) ? MediaQuery.of(context).size.height * 0.3 : 0.0,
       color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
       child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
+          childAspectRatio: 0.8,
         ),
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics:const NeverScrollableScrollPhysics(),
         itemCount: icons.length,
         itemBuilder: (BuildContext context,int index){
           return FunctionIconView(
@@ -292,7 +295,7 @@ class FunctionIconView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            margin: EdgeInsets.all(MARGIN_MEDIUM_1),
+            margin:const EdgeInsets.all(MARGIN_MEDIUM_1),
             alignment: Alignment.center,
             width: FUNCTIION_ICON_CONTAINER_WIDTH,
             height: FUNCTIION_ICON_CONTAINER_HEIGHT,
@@ -305,7 +308,7 @@ class FunctionIconView extends StatelessWidget {
           Text(title,
           style: TextStyle(
             color: Colors.black,
-            fontSize: 14,
+            fontSize: TEXT_MEDIUM,
           ),
           )
         ],
@@ -327,7 +330,7 @@ class ConsevationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1,vertical: MARGIN_SMALL),
+      padding:const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1,vertical: MARGIN_SMALL),
       child:
       ListView.builder(
         reverse: true,
@@ -371,15 +374,15 @@ class TextMsgShowView extends StatelessWidget {
             flex: 10,
             child: Container(
               margin: (isFriend) ? 
-              EdgeInsets.only(right: MARGIN_SIZE_FOR_CHAT,top: MARGIN_SMALL_1,bottom: MARGIN_SMALL_1) :
-               EdgeInsets.only(left: MARGIN_SIZE_FOR_CHAT,top: MARGIN_SMALL_1,bottom: MARGIN_SMALL_1),
-              padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM,vertical: MARGIN_MEDIUM_1),
+             const EdgeInsets.only(right: MARGIN_SIZE_FOR_CHAT,top: MARGIN_SMALL_1,bottom: MARGIN_SMALL_1) :
+              const EdgeInsets.only(left: MARGIN_SIZE_FOR_CHAT,top: MARGIN_SMALL_1,bottom: MARGIN_SMALL_1),
+              padding:const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM,vertical: MARGIN_MEDIUM_1),
               decoration: BoxDecoration(
-                color: TEXT_BACKGROUND_COLOR,
+                color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text("${message.msg}",
-              style: TextStyle(
+              style:const TextStyle(
                 fontSize: TEXT_MEDIUM_1,
                 fontWeight: FontWeight.w500,
               ),
@@ -418,22 +421,22 @@ class TextFieldView extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 height: FUNCTIION_ICON_CONTAINER_HEIGHT,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+                  padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM,vertical: MARGIN_SMALL_1),
                   child: Row(
      children: [
          IconButton(
            onPressed: (){},
-            icon: Icon(Icons.mic,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+            icon:const Icon(Icons.mic,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
             ),
           Expanded(
                child: TextField(
                  controller: msgController,
                  decoration: InputDecoration(
-                   contentPadding: EdgeInsets.symmetric(horizontal: MARGIN_SMALL_1),
+                   contentPadding:const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_1),
                    hintText: HINT_TEXT,
                    border: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(12),
-                     borderSide: BorderSide(color: TEXTFIELD_BORDER_COLOR,width: 0.4),
+                     borderSide:const BorderSide(color: TEXTFIELD_BORDER_COLOR,width: 0.4),
                    ),
                    filled: true,
                    fillColor: TEXTFIELD_BG_COLOR,
@@ -446,19 +449,18 @@ class TextFieldView extends StatelessWidget {
                    typeData(text);
                  },
               ),
-            //),
           ),
         (userText ==  ""  && chooseFile == null) ? IconButton(
            onPressed: (){
               add();
            },
-            icon: Icon(Icons.add,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
+            icon:const Icon(Icons.add,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
             ) :
              IconButton(
            onPressed: (){
               send();
            },
-            icon: Icon(Icons.send,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
+            icon:const Icon(Icons.send,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
             ),  
      ],
                   ),

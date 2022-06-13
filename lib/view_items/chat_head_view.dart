@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:we_chat_app/resources/strings.dart';
 
 class ChatHeadView extends StatelessWidget {
 
@@ -19,7 +20,7 @@ class ChatHeadView extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular((isChatPage) ? 25 : 15),
       ),
-      child: Image.network(image,
+      child: Image.network( (image == "") ? CONSTANT_IMAGE : image,
       fit: BoxFit.cover,),
     );
   }

@@ -1,15 +1,21 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:we_chat_app/blocs/me_tab_bloc.dart';
 import 'package:we_chat_app/data/vos/conservation_fun_icon_vo.dart';
+import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
+import 'package:we_chat_app/pages/qr_code_page.dart';
+import 'package:we_chat_app/pages/splash_page.dart';
 import 'package:we_chat_app/resources/colors.dart';
 import 'package:we_chat_app/resources/dimens.dart';
 import 'package:we_chat_app/resources/strings.dart';
+import 'package:we_chat_app/utils/extension.dart';
 
 
 List<ConservationFunIconVO> iconFun = [
 
   ConservationFunIconVO(
-    icon: Icon(Icons.photo,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+    icon: Icon(Icons.photo_camera_back,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
     title: ME_PHOTO_ICON_TEXT,
   ),
 
@@ -19,7 +25,7 @@ List<ConservationFunIconVO> iconFun = [
   ),
 
   ConservationFunIconVO(
-    icon: Icon(Icons.wallet,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+    icon: Icon(Icons.wallet_travel,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
     title: ME_WALLET_ICON_TEXT,
   ),
 
@@ -46,91 +52,104 @@ class MeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned.fill(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1),
-                  color: PRIMARY_COLOR,
-                  child: ProfileAppBarView(),
+    return ChangeNotifierProvider(
+      create: (context) => MeTabBloc(),
+      child: Scaffold(
+        body: Consumer<MeTabBloc>(
+    builder: (context,MeTabBloc bloc,child) =>
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned.fill(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1),
+                      color: PRIMARY_COLOR,
+                      child:  ProfileAppBarView(
+                        qrTouch: (){
+                          navigateToNextScreen(context,QrCodePage(loggedInUser: bloc.loggedInUser ?? UserVO.empty(),));
+                        },
+                        loggedInUser: bloc.loggedInUser ?? UserVO.empty(),
+                       )
+                    ),
+                    Expanded(
+                      child: Container(
+                        color: TEXT_BACKGROUND_COLOR,
+                      ),
+                    ),
+                  ],
+                )
                 ),
-                Expanded(
-                  child: Container(
-                    color: CONTACT_PAGE_BG_COLOR,
-                  ),
-                ),
-              ],
-            )
-            ),
-
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.21,
-              //left: MediaQuery.of(context).size.width * 0.34,
-              //right: MediaQuery.of(context).size.width * 0.34,
-              child:  Container(
-             width: ME_TAB_PROFILE_CONTAINER_WIDTH,
-             height: ME_TAB_PROFILE_CONTAINER_HEIGHT,
-             decoration: BoxDecoration(
-               color: ME_TAB_PROFILE_BG_COLOR,
-               image: DecorationImage(
-                 image: NetworkImage("https://preview.keenthemes.com/metronic-v4/theme_rtl/assets/pages/media/profile/profile_user.jpg"),
-                 fit: BoxFit.cover,
-               ),
-               borderRadius:const BorderRadius.all( Radius.circular(MARGIN_PROFILE_CIRCLE)),
-               border: Border.all(
-                 color: Colors.white,
-                 width: MARGIN_PRE_SMALL,
-               ),
-             ),
-           ),
-           ),
-
-           Positioned(
-             top: MediaQuery.of(context).size.height * 0.4,
-             //left: MediaQuery.of(context).size.width * 0.1,
-             //right: MediaQuery.of(context).size.width * 0.1,
-             child: BioTextView(
-               edit: (){
-                 return print("Edit tap");
-               },
-               text: BIO_TEXT,
-             ),
-             ),
-
-             Positioned(
-               //left: 0,
-               //right: 0,
-               top: MediaQuery.of(context).size.height * 0.46,
-               child: MeTabIconFunSection(
-                  photoTap: (){return print("photo me tap");},
-                  favouriteTap: (){return print("favourite me tap");},
-                  walletTap: (){return print("wallet me tap");},
-                  cardsTap: (){return print("cards me tap");},
-                  stickersTap: (){return print("stickers me tap");},
-                  settingTap: (){return print("setting me tap");},
+            
+                Positioned(
+                  top: MediaQuery.of(context).size.height * 0.21,
+                  //left: MediaQuery.of(context).size.width * 0.34,
+                  //right: MediaQuery.of(context).size.width * 0.34,
+                  child:  Container(
+                 width: ME_TAB_PROFILE_CONTAINER_WIDTH,
+                 height: ME_TAB_PROFILE_CONTAINER_HEIGHT,
+                 decoration: BoxDecoration(
+                   color: ME_TAB_PROFILE_BG_COLOR,
+                   image: DecorationImage(
+                     image: NetworkImage(bloc.loggedInUser?.profileImage ?? CONSTANT_IMAGE),
+                     fit: BoxFit.cover,
+                   ),
+                   borderRadius:const BorderRadius.all( Radius.circular(MARGIN_PROFILE_CIRCLE)),
+                   border: Border.all(
+                     color: Colors.white,
+                     width: MARGIN_PRE_SMALL,
+                   ),
+                 ),
                ),
                ),
-
+            
                Positioned(
-                 top: MediaQuery.of(context).size.height * 0.86,
-                 //left: MediaQuery.of(context).size.width * 0.2,
-                 //right: MediaQuery.of(context).size.width * 0.2,
-                 child: LogoutButtonView(
-                   logout: (){
-                     print("logout tap");
+                 top: MediaQuery.of(context).size.height * 0.4,
+                 //left: MediaQuery.of(context).size.width * 0.1,
+                 //right: MediaQuery.of(context).size.width * 0.1,
+                 child: BioTextView(
+                   edit: (){
+                     return print("Edit tap");
                    },
-                 )
-                 )
-
-
-        ],
+                   text: BIO_TEXT,
+                 ),
+                 ),
+            
+                 Positioned(
+                   top: MediaQuery.of(context).size.height * 0.42,
+                   child: MeTabIconFunSection(
+                      photoTap: (){return print("photo me tap");},
+                      favouriteTap: (){return print("favourite me tap");},
+                      walletTap: (){return print("wallet me tap");},
+                      cardsTap: (){return print("cards me tap");},
+                      stickersTap: (){return print("stickers me tap");},
+                      settingTap: (){return print("setting me tap");},
+                   ),
+                   ),
+            
+                   Positioned(
+                     top: MediaQuery.of(context).size.height * 0.86,
+                     //left: MediaQuery.of(context).size.width * 0.2,
+                     //right: MediaQuery.of(context).size.width * 0.2,
+                     child: Builder(
+                      builder: (context) =>
+                       LogoutButtonView(
+                         logout: (){
+                          MeTabBloc meBloc = Provider.of(context,listen: false);
+                          meBloc.logout().then((value) => navigteToEnd(context,SplashPage()));
+                         },
+                       ),
+                     )
+                     )
+            
+            
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -288,7 +307,7 @@ class BioTextView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 46),
+      padding:const EdgeInsets.symmetric(horizontal: DISCOVER_POST_COMMENT_SECTION_PADDING),
       width: MediaQuery.of(context).size.width,
       height: 70,
       child: RichText(
@@ -297,7 +316,7 @@ class BioTextView extends StatelessWidget {
         //maxLines: 3,
         text: TextSpan(
           text: text,
-          style: TextStyle(
+          style:const TextStyle(
             color: UNSELECTED_ICON_COLOR,
             fontSize: TEXT_MEDIUM_1,
             fontWeight: FontWeight.w500,
@@ -310,7 +329,7 @@ class BioTextView extends StatelessWidget {
               //  edit();
               //    },
                recognizer: TapGestureRecognizer()..onTap = ()=> debugPrint("work here"),
-              style: TextStyle(
+              style:const TextStyle(
                 color: PRIMARY_COLOR,
                 fontSize: MARGIN_MEDIUM_1,
                 fontWeight: FontWeight.w700,
@@ -325,6 +344,14 @@ class BioTextView extends StatelessWidget {
 
 class ProfileAppBarView extends StatelessWidget {
 
+  final UserVO loggedInUser;
+  final Function qrTouch;
+
+  ProfileAppBarView({
+    required this.loggedInUser,
+    required this.qrTouch,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -334,16 +361,18 @@ class ProfileAppBarView extends StatelessWidget {
         Expanded(
           flex: 3,
           child: ProfileNameView(
-            title: "Alberto Calvo",
-            subtitle: "alberto203",
+            title: loggedInUser.userName ?? "",
+            subtitle: loggedInUser.qrCode ?? "",
           ),
         ),
         Expanded(
           child: Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              onPressed: (){},
-               icon: Icon(Icons.qr_code,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.white,),
+              onPressed: (){
+                qrTouch();
+              },
+               icon:const Icon(Icons.qr_code,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.white,),
                ),
           ),
         )
@@ -369,16 +398,17 @@ class ProfileNameView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(title,
-        style: TextStyle(
+        style:const TextStyle(
           color: Colors.white,
           fontSize: TEXT_LARGE_1,
           fontWeight: FontWeight.w600,
         ),
         ),
         Text(subtitle,
-        style: TextStyle(
+        textAlign: TextAlign.center,
+        style:const TextStyle(
           color: Colors.white,
-          fontSize: TEXT_MEDIUM_1X,
+          fontSize: TEXT_MEDIUM,
           fontWeight: FontWeight.w400,
         ),
         ),

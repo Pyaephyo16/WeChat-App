@@ -13,7 +13,7 @@ class AppBarTitleView extends StatelessWidget{
   Widget build(BuildContext context){
     return  Text(
               title,
-            style: TextStyle(
+            style:const TextStyle(
               color: Colors.white,
               fontSize: TEXT_LARGE_1,
               fontWeight: FontWeight.bold,

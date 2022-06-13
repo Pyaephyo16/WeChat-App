@@ -6,10 +6,12 @@ class PersonDescriptionView extends StatelessWidget {
 
   final String description;
   final bool isChatPage;
+  final bool isMomentDescription;
 
   PersonDescriptionView({
     required this.description,
     this.isChatPage = true,
+    this.isMomentDescription = false,
     });
 
   @override
@@ -18,7 +20,7 @@ class PersonDescriptionView extends StatelessWidget {
     maxLines: (isChatPage) ? 1 : 4,
     overflow: (isChatPage) ? TextOverflow.ellipsis : null,
     style: TextStyle(
-      color: CHAT_HEAD_SUBTITLE_COLOR,
+      color: (isMomentDescription == true) ? UNSELECTED_ICON_COLOR : CHAT_HEAD_SUBTITLE_COLOR,
       fontWeight: FontWeight.w500,
       fontSize: TEXT_MEDIUM_1,
     ),

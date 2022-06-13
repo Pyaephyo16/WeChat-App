@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -18,211 +19,275 @@ import 'package:we_chat_app/view_items/person_name_view.dart';
 import 'package:path/path.dart' as p;
 
 class AddNewPostPage extends StatelessWidget {
+  final int? idForEdit;
 
-    final int? idForEdit;
-
-    AddNewPostPage({
-      required this.idForEdit,
-    });
+  AddNewPostPage({
+    required this.idForEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => AddNewPostPageBloc(idForEdit),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          elevation: 1,
-          backgroundColor: PRIMARY_COLOR,
-          leading: IconButton(
-            onPressed: (){
-              Navigator.pop(context);
-            },
-           icon:const Icon(Icons.chevron_left,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
-             ),
-            title: AppBarTitleView(title: CREATE_POST_TEXT),
-            actions: [
-                 Builder(
-                   builder: (context) =>
-                    TextButton(
-                    onPressed: (){
-                      AddNewPostPageBloc bloc = Provider.of(context,listen: false);
-                        //bloc.addPost().then((value) => Navigator.pop(context));
-                        bloc.tapPostButton().then((value) => Navigator.pop(context));
-                    },
-                     child: Text("Post",
-                     style: TextStyle(
-                       color: Colors.white,
-                       fontSize: TEXT_LARGE,
-                       fontWeight: FontWeight.bold,
-                     ),
-                     )
-                               ),
-                 ),
-            ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1,vertical: 10),
-          child: Column(
-            children: [
-              Consumer<AddNewPostPageBloc>(
-                builder: (context,AddNewPostPageBloc bloc,child) =>
-                 NameAndImageView(
-                   name: bloc.userName,
-                   image: bloc.profileImage,
-                 ),
+      child: Selector<AddNewPostPageBloc,bool>(
+        selector: (context,bloc) => bloc.isLoading,
+        shouldRebuild: (previous,next) => previous != next,
+        builder: (context,isLoading,child) =>
+         Stack(
+           children: [
+             Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                elevation: 1,
+                backgroundColor: PRIMARY_COLOR,
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.chevron_left,
+                    size: MARGIN_SIZE_FOR_ICON,
+                    color: Colors.white,
+                  ),
                 ),
-             const SizedBox(height: 12,),
-              Selector<AddNewPostPageBloc,TextEditingController>(
-                selector: (context,bloc) => bloc.despController,
-                shouldRebuild: (previous,next) => previous != next,
-                builder: (context,despController,child) =>
-                 PostTextFieldView(
-                   despController: despController,
-                   //postDescription: postDescription,
-                  // postDesp: (text){
-                  //   AddNewPostPageBloc bloc = Provider.of(context,listen: false);
-                  //   bloc.descriptionType(text);
-                  // },
+                title: AppBarTitleView(title: CREATE_POST_TEXT),
+                actions: [
+                  Builder(
+                    builder: (context) => TextButton(
+                        onPressed: () {
+                          AddNewPostPageBloc bloc =
+                              Provider.of(context, listen: false);
+                          bloc
+                              .tapPostButton()
+                              .then((value) => Navigator.pop(context));
+                        },
+                        child: const Text(
+                          POST_TEXT,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: TEXT_LARGE,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                  ),
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: MARGIN_MEDIUM_1, vertical: MARGIN_SMALL_1X),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Consumer<AddNewPostPageBloc>(
+                      builder: (context, AddNewPostPageBloc bloc, child) =>
+                          NameAndImageView(
+                        name: bloc.userName,
+                        image: bloc.profileImage,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: MARGIN_MEDIUM,
+                    ),
+                    Selector<AddNewPostPageBloc, TextEditingController>(
+                      selector: (context, bloc) => bloc.despController,
+                      shouldRebuild: (previous, next) => previous != next,
+                      builder: (context, despController, child) =>
+                       PostTextFieldView(
+                        despController: despController,
+                        onChanged: (text){
+                          AddNewPostPageBloc bloc = Provider.of(context,listen: false);
+                          bloc.descriptionType(text);
+                        },
+                      ),
+                    ),
+                    Selector<AddNewPostPageBloc, bool>(
+                      selector: (context, bloc) => bloc.isError,
+                      shouldRebuild: (previous, next) => previous != next,
+                      builder: (context, isError, child) => ErrorShowView(
+                        isError: isError,
+                      ),
+                    ),
+                    Consumer<AddNewPostPageBloc>(
+                      builder: (context, bloc, child) => PhotoOrVideoView(
+                        pickedFile: bloc.pickedFile,
+                        fileType: bloc.fileType,
+                        flickManager: bloc.manager,
+                        editImageOrVideo: bloc.editImageOrVideo,
+                        deletePhoto: () {
+                          AddNewPostPageBloc bloc =
+                              Provider.of(context, listen: false);
+                          bloc.deleteChosenPhoto();
+                        },
+                      ),
+                    ),
+                    Spacer(),
+                    Builder(
+                      builder: (context) => Center(
+                        child: IconButton(
+                          onPressed: () {
+                            showBottomSheet(
+                              context,
+                              photoVideo: () async {
+                                FilePickerResult? result =
+                                    await FilePicker.platform.pickFiles();
+                                if (result != null) {
+                                  AddNewPostPageBloc bloc = Provider.of(context, listen: false);
+                                  bloc.fileChosen(File(result.files.single.path!),
+                                      result.files.single.extension!);
+                                }
+                                Navigator.pop(context);
+                              },
+                              camera: () async {
+                                final imagePicker = ImagePicker();
+                                final XFile? cameraImage = await imagePicker.pickImage(source: ImageSource.camera, imageQuality: 80);
+                                if (cameraImage != null) {
+                                  AddNewPostPageBloc bloc = Provider.of(context, listen: false);
+                                  final cameraFileType = p.extension(cameraImage.path);
+                                  bloc.fileChosen(File(cameraImage.path), cameraFileType);
+                                }
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.arrow_circle_up_sharp,
+                            size: NEW_POST_BTM_SHEET_UP_ICON_SIZE,
+                            color: COMMENT_TEXT_COLOR,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
-              Selector<AddNewPostPageBloc,bool>(
-                selector: (context,bloc) => bloc.isError,
-                shouldRebuild: (previous,next) => previous != next,
-                builder: (context,isError,child) =>
-                ErrorShowView(
-                  isError: isError,
-                ),
-                ),
-              Consumer<AddNewPostPageBloc>(
-                builder: (context,bloc,child) =>
-                PhotoOrVideoView(
-                  pickedFile: bloc.pickedFile,
-                  fileType: bloc.fileType,
-                  flickManager: bloc.manager,
-                  editImageOrVideo: bloc.editImageOrVideo,
-                  deletePhoto: (){
-                    AddNewPostPageBloc bloc = Provider.of(context,listen: false);
-                    bloc.deleteChosenPhoto();
-                  },
-                ),
-                ),
-              Spacer(),
-              Builder(
-                builder: (context) =>
-                 IconButton(
-                   onPressed: (){
-                showBottomSheet(
-                  context,
-                  photoVideo: ()async{
-                       FilePickerResult? result = await FilePicker.platform.pickFiles();
-                       if (result != null) {
-                          AddNewPostPageBloc bloc = Provider.of(context,listen: false);
-                          bloc.fileChosen(File(result.files.single.path!),result.files.single.extension!);
-                         }
-                         Navigator.pop(context);
-                  },
-                  camera: ()async{
-                    final imagePicker = ImagePicker();
-                    final XFile? cameraImage =await imagePicker.pickImage(source: ImageSource.camera,imageQuality: 80);
-                     if(cameraImage !=null){
-                        AddNewPostPageBloc bloc = Provider.of(context,listen: false);
-                        final cameraFileType = p.extension(cameraImage.path);
-                         bloc.fileChosen(File(cameraImage.path),cameraFileType);
-                     }
-                      Navigator.pop(context);
-                  },
-                  );
-                          },
-                         icon:const Icon(Icons.arrow_circle_up_sharp,size: 36,color: COMMENT_TEXT_COLOR,),
-                           ),
-              )
-            ],
-          ),
         ),
+
+            Visibility(
+              visible: isLoading,
+              child: Center(
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: DISABLED_BTN_COLOR,
+                  ),
+                  child: SpinKitFadingCircle(
+                    color: PRIMARY_COLOR,
+                  ),
+                ),
+              ),
+              ),
+
+           ],
+         ),
       ),
     );
   }
 
   void showBottomSheet(
-    BuildContext context,
-    {
-      required Function photoVideo,
-      required Function camera,
-    }){
+    BuildContext context, {
+    required Function photoVideo,
+    required Function camera,
+  }) {
     showModalBottomSheet(
-      context: context,
-       builder: (_){
-         return 
-            Column(
-             mainAxisSize: MainAxisSize.min,
-             crossAxisAlignment: CrossAxisAlignment.start,
-             children: [
-                  PostFunctionIconAndTextView(
-                   icon:const FaIcon(FontAwesomeIcons.images,color: PHOTO_VIDEO_COLOR,size: MARGIN_MEDIUM_2X,),
-                   title:PHOTO_VIDEO_TEXT,
-                   tapped: (){
-                     photoVideo();
-                   },
-                 ),
-               DivideLineView(),
-                PostFunctionIconAndTextView(
-                 icon:const FaIcon(FontAwesomeIcons.userPlus,color: TAG_PEOPLE_COLOR,size: MARGIN_MEDIUM_2X,),
-                 title:TAG_PEOPLE_TEXT,
-                 tapped: (){
-                   print("tag people tap");
-                 },
-               ),
-               DivideLineView(),
-                PostFunctionIconAndTextView(
-                 icon:const FaIcon(FontAwesomeIcons.faceGrin,color: FEELING_ACTIVITY_COLOR,size: MARGIN_MEDIUM_2X,),
-                 title:FEELING_ACTIVITY_TEXT,
-                 tapped: (){
+        context: context,
+        builder: (_) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PostFunctionIconAndTextView(
+                icon: const FaIcon(
+                  FontAwesomeIcons.images,
+                  color: PHOTO_VIDEO_COLOR,
+                  size: MARGIN_MEDIUM_2X,
+                ),
+                title: PHOTO_VIDEO_TEXT,
+                tapped: () {
+                  photoVideo();
+                },
+              ),
+              DivideLineView(),
+              PostFunctionIconAndTextView(
+                icon: const FaIcon(
+                  FontAwesomeIcons.userPlus,
+                  color: TAG_PEOPLE_COLOR,
+                  size: MARGIN_MEDIUM_2X,
+                ),
+                title: TAG_PEOPLE_TEXT,
+                tapped: () {
+                  print("tag people tap");
+                },
+              ),
+              DivideLineView(),
+              PostFunctionIconAndTextView(
+                icon: const FaIcon(
+                  FontAwesomeIcons.faceGrin,
+                  color: FEELING_ACTIVITY_COLOR,
+                  size: MARGIN_MEDIUM_2X,
+                ),
+                title: FEELING_ACTIVITY_TEXT,
+                tapped: () {
                   print("feeling tap");
-                 },
-               ),
-               DivideLineView(),
-                PostFunctionIconAndTextView(
-                 icon:const FaIcon(FontAwesomeIcons.locationDot,color: CHECK_IN_COLOR,size: MARGIN_MEDIUM_2X,),
-                 title:CHECK_IN_TEXT,
-                 tapped: (){
-                    print("location tap");
-                 },
-               ),
-               DivideLineView(),
-                PostFunctionIconAndTextView(
-                 icon:const FaIcon(FontAwesomeIcons.video,color: LIVE_VIDEO_COLOR,size: MARGIN_MEDIUM_2X,),
-                 title:LIVE_VIDEO_TEXT,
-                 tapped: (){
-                     print("video tap");
-                 },
-               ),
-               DivideLineView(),
-                PostFunctionIconAndTextView(
-                 icon:const FaIcon(FontAwesomeIcons.a,color: BACKGROUND_AA_COLOR,size: MARGIN_MEDIUM_2X,),
-                 title:BACKGROUND_COLOR_TEXT,
-                 tapped: (){
-                     print("aa tap");
-                 },
-               ),
-               DivideLineView(),
-                PostFunctionIconAndTextView(
-                 icon:const FaIcon(FontAwesomeIcons.camera,color: CAMERA_COLOR,size: MARGIN_MEDIUM_2X,),
-                 title:CAMERA_TEXT,
-                 tapped: (){
-                   camera();
-                 },
-               ),
-             ],
-           );
-       }  
-       );
+                },
+              ),
+              DivideLineView(),
+              PostFunctionIconAndTextView(
+                icon: const FaIcon(
+                  FontAwesomeIcons.locationDot,
+                  color: CHECK_IN_COLOR,
+                  size: MARGIN_MEDIUM_2X,
+                ),
+                title: CHECK_IN_TEXT,
+                tapped: () {
+                  print("location tap");
+                },
+              ),
+              DivideLineView(),
+              PostFunctionIconAndTextView(
+                icon: const FaIcon(
+                  FontAwesomeIcons.video,
+                  color: LIVE_VIDEO_COLOR,
+                  size: MARGIN_MEDIUM_2X,
+                ),
+                title: LIVE_VIDEO_TEXT,
+                tapped: () {
+                  print("video tap");
+                },
+              ),
+              DivideLineView(),
+              PostFunctionIconAndTextView(
+                icon: const FaIcon(
+                  FontAwesomeIcons.a,
+                  color: BACKGROUND_AA_COLOR,
+                  size: MARGIN_MEDIUM_2X,
+                ),
+                title: BACKGROUND_COLOR_TEXT,
+                tapped: () {
+                  print("aa tap");
+                },
+              ),
+              DivideLineView(),
+              PostFunctionIconAndTextView(
+                icon: const FaIcon(
+                  FontAwesomeIcons.camera,
+                  color: CAMERA_COLOR,
+                  size: MARGIN_MEDIUM_2X,
+                ),
+                title: CAMERA_TEXT,
+                tapped: () {
+                  camera();
+                },
+              ),
+            ],
+          );
+        });
   }
-
 }
 
 class ErrorShowView extends StatelessWidget {
-
   final bool isError;
 
   ErrorShowView({
@@ -233,20 +298,19 @@ class ErrorShowView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Visibility(
       visible: isError,
-      child:const Text(
-          REQUIRED_TEXT,
+      child: const Text(
+        REQUIRED_TEXT,
         style: TextStyle(
-          fontSize: 14,
+          fontSize: TEXT_MEDIUM,
           color: Colors.red,
           fontWeight: FontWeight.w500,
         ),
-        ),
-      );
+      ),
+    );
   }
 }
 
 class PhotoOrVideoView extends StatelessWidget {
-
   final File? pickedFile;
   final Function deletePhoto;
   final String? fileType;
@@ -264,40 +328,61 @@ class PhotoOrVideoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("picked file wiget ============> $pickedFile");
+    print("editImageOrVideo wiget ============> $editImageOrVideo");
     return Visibility(
-      visible:  ( pickedFile != null || flickManager != null || editImageOrVideo != null || editImageOrVideo != "") ? true : false,
+      visible: (pickedFile != null || editImageOrVideo != null) ? true : false,
       child: Stack(
         children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-           height: MediaQuery.of(context).size.height * 0.3,
-           clipBehavior: Clip.antiAlias,
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.3,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
             ),
-            child: (editImageOrVideo != null) ?
-             (fileType == "jpg" || fileType == "png" || fileType == "jpeg" || fileType == ".jpg") ? Image.network(editImageOrVideo ?? "",
-              fit: BoxFit.cover,
-            ) : (fileType == "mpr") ? 
-            FlickVideoPlayer(flickManager: FlickManager(videoPlayerController: VideoPlayerController.network(editImageOrVideo!),autoPlay: false)) 
-            : Container()
-            
-
-
-             : (fileType == "jpg" || fileType == "png" || fileType == "jpeg" || fileType == ".jpg") ? Image.file( pickedFile ?? File(''),
-              fit: BoxFit.cover,
-            )
-            : (fileType == "mp4") ? FlickVideoPlayer(flickManager: flickManager!) : Container(),
-            ),
-
+            child: (editImageOrVideo != null)
+                ? (fileType == "jpg" ||
+                        fileType == "png" ||
+                        fileType == "jpeg" ||
+                        fileType == ".jpg" ||
+                        fileType == "gif")
+                    ? Image.network(
+                        editImageOrVideo ?? "",
+                        fit: BoxFit.cover,
+                      )
+                    : (fileType == "mp4")
+                        ? FlickVideoPlayer(
+                            flickManager: FlickManager(
+                                videoPlayerController:
+                                    VideoPlayerController.network(
+                                        editImageOrVideo!),
+                                autoPlay: false))
+                        : Container()
+                : (fileType == "jpg" ||
+                        fileType == "png" ||
+                        fileType == "jpeg" ||
+                        fileType == ".jpg" ||
+                        fileType == "gif")
+                    ? Image.file(
+                        pickedFile ?? File(''),
+                        fit: BoxFit.cover,
+                      )
+                    : (fileType == "mp4")
+                        ? FlickVideoPlayer(flickManager: flickManager!)
+                        : Container(),
+          ),
           Align(
             alignment: Alignment.topRight,
             child: IconButton(
-              onPressed: (){
+              onPressed: () {
                 deletePhoto();
               },
-               icon: Icon(Icons.cancel_outlined,size: 32,color: Colors.red,),
+              icon: Icon(
+                Icons.cancel_outlined,
+                size: MARGIN_SIZE_FOR_ICON,
+                color: Colors.red,
               ),
+            ),
           )
         ],
       ),
@@ -306,7 +391,6 @@ class PhotoOrVideoView extends StatelessWidget {
 }
 
 class PostFunctionIconAndTextView extends StatelessWidget {
-
   final String title;
   final FaIcon icon;
   final Function tapped;
@@ -320,25 +404,27 @@ class PostFunctionIconAndTextView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16,horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_1, horizontal: MARGIN_MEDIUM_1),
       child: GestureDetector(
-        onTap: (){
+        onTap: () {
           tapped();
         },
         child: Row(
           children: [
             Container(
-              width: MediaQuery.of(context).size.width * 0.08,
-              child: icon),
-            SizedBox(width: 14,),
+                width: MediaQuery.of(context).size.width * 0.08, child: icon),
+           const SizedBox(
+              width: MARGIN_MEDIUM_1,
+            ),
             Expanded(
-              child: Text(title,
-              style:const TextStyle(
-                color: COMMENT_TEXT_COLOR,
-                fontSize: 18,
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: COMMENT_TEXT_COLOR,
+                  fontSize: TEXT_MEDIUM_1X,
+                ),
               ),
-              ),
-            ), 
+            ),
           ],
         ),
       ),
@@ -352,22 +438,19 @@ class PostFunctionIconAndTextView extends StatelessWidget {
       //       color: COMMENT_TEXT_COLOR,
       //       fontSize: 18,
       //     ),
-      //     ), 
+      //     ),
       // ),
     );
   }
 }
 
 class PostTextFieldView extends StatelessWidget {
-
-  //final Function(String) postDesp;
-  //final String postDescription;
   final TextEditingController despController;
+  final Function(String) onChanged;
 
   PostTextFieldView({
-    //required this.postDesp,
-    //required this.postDescription,
     required this.despController,
+    required this.onChanged,
   });
 
   @override
@@ -377,22 +460,22 @@ class PostTextFieldView extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.3,
       child: TextField(
         controller: despController,
+        onChanged: (text){
+          onChanged(text);
+        },
         maxLines: 20,
-        // onChanged: (text){
-        //   postDesp(text);
-        // },
-        style:const TextStyle(
-          fontSize: 22,
+        style: const TextStyle(
+          fontSize: TEXT_LARGE_1,
           color: Colors.black,
           fontWeight: FontWeight.w400,
         ),
-        decoration:const InputDecoration.collapsed(
+        decoration: const InputDecoration.collapsed(
           hintText: WHAT_S_ON_YOUR_MIND_TEXT,
           hintStyle: TextStyle(
-          fontSize: 22,
-          color: CONTACT_SEARCH_TEXT_COLOR,
-          fontWeight: FontWeight.w400,
-        ),
+            fontSize: TEXT_LARGE_1,
+            color: CONTACT_SEARCH_TEXT_COLOR,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ),
     );
@@ -400,7 +483,6 @@ class PostTextFieldView extends StatelessWidget {
 }
 
 class NameAndImageView extends StatelessWidget {
-
   final String name;
   final String image;
 
@@ -412,19 +494,21 @@ class NameAndImageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ChatHeadView(
             image: image,
-             isChatPage: true,
-             ),
-            const SizedBox(width: 16,),
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: PersonNameView(name: name),
-            ),
+            isChatPage: true,
+          ),
+          const SizedBox(
+            width: MARGIN_MEDIUM_1,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: MARGIN_PRE_SMALL),
+            child: PersonNameView(name: name),
+          ),
         ],
       ),
     );

@@ -4,18 +4,24 @@ import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:video_player/video_player.dart';
+import 'package:we_chat_app/data/model/auth_model.dart';
+import 'package:we_chat_app/data/model/auth_model_impl.dart';
 import 'package:we_chat_app/data/model/cloud_news_feed_model_impl.dart';
 import 'package:we_chat_app/data/model/we_chat_model.dart';
 import 'package:we_chat_app/data/vos/news_feed_vo/news_feed_vo.dart';
+import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
+import 'package:we_chat_app/resources/strings.dart';
 
 class AddNewPostPageBloc extends ChangeNotifier{
 
   File? pickedFile;
   String? fileType;
   FlickManager? manager;
-  //String postDescription = "";
+  String postDescription = "";
   bool isDisposed = false;
   bool isError = false;
+  bool isLoading = false;
+  UserVO? loggedInUser;
 
   TextEditingController despController = TextEditingController();
 
@@ -30,8 +36,21 @@ class AddNewPostPageBloc extends ChangeNotifier{
   ///Model
   WeChatModel model = CloudNewsFeedModelImpl();
 
+  ///Auth 
+  AuthModel authModel = AuthModelImpl();
+
 
     AddNewPostPageBloc(int? idForEdit){
+
+        authModel.getLoggedInUser().then((value){
+            model.getUserById(value.id ?? "").listen((event) {
+                loggedInUser = event;
+                userName = loggedInUser?.userName ?? "";
+                profileImage = loggedInUser?.profileImage ?? CONSTANT_IMAGE;
+                _notifySafely();
+            });
+        });
+
         if(idForEdit != null){
           isEditMode = true;
             prepopulateForEdit(idForEdit);
@@ -41,8 +60,10 @@ class AddNewPostPageBloc extends ChangeNotifier{
     }
 
     void populateForNewPost(){
-        profileImage = "https://preview.keenthemes.com/metronic-v4/theme_rtl/assets/pages/media/profile/profile_user.jpg";
-        userName = "Nina Rocha";
+        profileImage = loggedInUser?.profileImage ?? "";
+        userName = loggedInUser?.userName ?? "";
+        print("user name for populate =========> $userName");
+        print("profile for populate ======> $profileImage");
         _notifySafely();
     }
 
@@ -50,9 +71,8 @@ class AddNewPostPageBloc extends ChangeNotifier{
       model.getNewsFeedPostById(idForEdit).listen((event) {
             userName = event.userName ?? "";
             profileImage = event.profileImage ?? "";
-            editImageOrVideo = event.post ?? "";
+            editImageOrVideo = (event.post == "") ? null : event.post;
             fileType = event.fileType ?? "";
-            //postDescription = event.description ?? "";
             despController.text = event.description ?? "";
             newsFeedPostById = event;
             print("edit get by id =====> $editImageOrVideo");
@@ -61,9 +81,13 @@ class AddNewPostPageBloc extends ChangeNotifier{
     }
 
 
-  // void descriptionType(String text){
-  //     postDescription = text;
-  // }
+  void descriptionType(String text){
+      postDescription = text;
+      if(postDescription != ""){
+        isError = false;
+        _notifySafely();
+      }
+  }
 
 
   Future<File?> fileChosen(File chooseFile,String type){
@@ -88,21 +112,32 @@ class AddNewPostPageBloc extends ChangeNotifier{
   }
 
   Future<void> tapPostButton(){
-    if(despController.text.isEmpty){
+    if(despController.text.isEmpty && postDescription == ""){
       isError = true;
       _notifySafely();
       return Future.error("error");
     }else{
+      isLoading = true;
+      _notifySafely();
       if(isEditMode){
-      return editedDataPost();
+        isError = false;
+      return editedDataPost().then((value){
+          isLoading = false;
+          _notifySafely();
+      });
       }else{
-        return addPost();
+        isError = false;
+        return addPost().then((value){
+          isLoading = false;
+          _notifySafely();
+        });
       }
     }
   }
 
   Future<void> editedDataPost(){
       newsFeedPostById?.description = despController.text;
+      newsFeedPostById?.profileImage = profileImage;
       newsFeedPostById?.fileType = fileType;
       newsFeedPostById?.post = editImageOrVideo ?? pickedFile?.path.toString();
         if(editImageOrVideo == null){
@@ -114,8 +149,7 @@ class AddNewPostPageBloc extends ChangeNotifier{
 
 
   Future<void> addPost(){
-    //return model.addNewPost(postDescription,pickedFile,fileType);
-    return model.addNewPost(despController.text,pickedFile,fileType);
+    return model.addNewPost(despController.text,pickedFile,fileType,profileImage);
   }
 
 

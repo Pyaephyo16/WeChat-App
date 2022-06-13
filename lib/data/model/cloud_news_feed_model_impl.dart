@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:we_chat_app/data/model/auth_model.dart';
+import 'package:we_chat_app/data/model/auth_model_impl.dart';
 import 'package:we_chat_app/data/model/we_chat_model.dart';
 import 'package:we_chat_app/data/vos/news_feed_vo/news_feed_vo.dart';
+import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/network/cloud_news_feed_data_agent_impl.dart';
 import 'package:we_chat_app/network/we_chat_data_agent.dart';
 
@@ -15,36 +18,38 @@ class CloudNewsFeedModelImpl extends WeChatModel{
 
   CloudNewsFeedModelImpl._internal();
 
+  ///Other Model
+  AuthModel authModel = AuthModelImpl();
+
   ///Data Agent
   WeChatDataAgent dataAgent = CloudNewsFeedDataAgentImpl();
 
 
   @override
-  Future<void> addNewPost(String description,File? post,String? fileType) {
+  Future<void> addNewPost(String description,File? post,String? fileType,String profileImage) {
     print("data lyer post check =========> $post");
     print("data layer filetype check =======> $fileType");
       if(post != null && fileType != null){
-        print("work with image");
        return dataAgent
         .uploadFileToFirebaseStorage(post)
-        .then((postUrl) => addPostData(description,postUrl,fileType))
+        .then((postUrl) => addPostData(description,postUrl,fileType,profileImage))
         .then((newPost) => dataAgent.addNewPost(newPost));
       }else{
-        print("work without image");
-       return addPostData(description,"","")
+       return addPostData(description,"","",profileImage)
         .then((newPost) => dataAgent.addNewPost(newPost),);
       }
   }
 
-  Future<NewsFeedVO> addPostData(String description,String postUrl,String fileType){
+  Future<NewsFeedVO> addPostData(String description,String postUrl,String fileType,String profileImage)async{
     var postId = DateTime.now().millisecondsSinceEpoch;
+    var data = await authModel.getLoggedInUser();
     var newPost = NewsFeedVO(
       id: postId,
     description: description,
     fileType: fileType,
     post: postUrl,
-    userName: "Nina Rocha",
-    profileImage: "https://preview.keenthemes.com/metronic-v4/theme_rtl/assets/pages/media/profile/profile_user.jpg",
+    userName: data.userName,
+    profileImage: profileImage,
     );
     return Future.value(newPost);
   }
@@ -92,6 +97,13 @@ class CloudNewsFeedModelImpl extends WeChatModel{
     description: editPost.description,
     );
     return Future.value(editData);
+  }
+
+    ///User
+
+  @override
+  Stream<UserVO> getUserById(String id) {
+    return dataAgent.getUserById(id);
   }
   
 

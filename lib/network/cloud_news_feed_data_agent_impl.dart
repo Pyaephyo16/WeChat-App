@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:we_chat_app/data/vos/news_feed_vo/news_feed_vo.dart';
+import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/network/we_chat_data_agent.dart';
 
 const newsFeedCollection = "newsfeed";
 const fileUpload = "uploads";
+const userCollection = "users";
 
 class CloudNewsFeedDataAgentImpl extends WeChatDataAgent{
 
@@ -23,6 +26,10 @@ class CloudNewsFeedDataAgentImpl extends WeChatDataAgent{
 
   ///Firebase Storage
   final FirebaseStorage storage = FirebaseStorage.instance;
+
+
+  ///Firebase Auth
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
 
   
@@ -76,6 +83,83 @@ class CloudNewsFeedDataAgentImpl extends WeChatDataAgent{
         return NewsFeedVO.fromJson(documentSnapshot.data()!);
       });
   }
+    @override
+  Stream<UserVO> getUserById(String id) {
+    return cloudFirestore
+      .collection(userCollection)
+      .doc(id)
+      .get()
+      .asStream()
+      .where((documentSnapshot) => documentSnapshot.data() != null)
+      .map((documentSnapshot){
+        return UserVO.fromJson(documentSnapshot.data()!);
+      });
+  }
 
+  ///Auth
+
+
+    @override
+  Future registerNewUser(UserVO newUser) {
+   return auth  
+    .createUserWithEmailAndPassword(email: newUser.email ?? "", password: newUser.password ?? "")
+    .then((credential) => 
+    credential.user?..updateDisplayName(newUser.userName))
+    .then((user){
+      newUser.id = user?.uid ?? "";
+      newUser.qrCode = user?.uid ?? "";
+    print("usercheck network ===> $newUser");
+      _addNewUser(newUser);
+    });
+  }
+
+  Future<void> _addNewUser(UserVO newUser){
+      return cloudFirestore
+      .collection(userCollection)
+      .doc(newUser.id.toString())
+      .set(newUser.toJson());
+  }
+  
+  @override
+  Future loginUser(String email, String password) {
+    return auth.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+
+  @override
+  Future<UserVO> getLoggedInUser() {
+   UserVO user = UserVO(
+      id: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      userName: auth.currentUser?.displayName,
+      qrCode: auth.currentUser?.uid,
+   );
+   return Future.value(user);
+  }
+
+  @override
+  bool isLoggedIn() {
+    return auth.currentUser != null;
+  }
+
+  @override
+  Future logout() {
+   return auth.signOut();
+  }
+  
+  ///User
+
+  // @override
+  // Stream<UserVO> getUserById(String id) {
+  //   return cloudFirestore
+  //     .collection(userCollection)
+  //     .doc(id)
+  //     .get()
+  //     .asStream()
+  //     .where((documentSnapshot) => documentSnapshot.data() != null)
+  //     .map((documentSnapshot){
+  //       return UserVO.fromJson(documentSnapshot.data()!);
+  //     });
+  // }
 
 }

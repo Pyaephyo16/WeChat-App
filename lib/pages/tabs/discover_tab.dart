@@ -6,9 +6,11 @@ import 'package:video_player/video_player.dart';
 import 'package:we_chat_app/blocs/add_new_post_page_bloc.dart';
 import 'package:we_chat_app/blocs/discover_tab_bloc.dart';
 import 'package:we_chat_app/data/vos/news_feed_vo/news_feed_vo.dart';
+import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/dummy/dummy_data.dart';
 import 'package:we_chat_app/pages/add_new_post_page.dart';
 import 'package:we_chat_app/pages/overlay_comment.dart';
+import 'package:we_chat_app/pages/overlay_post_detail.dart';
 import 'package:we_chat_app/resources/colors.dart';
 import 'package:we_chat_app/resources/dimens.dart';
 import 'package:we_chat_app/resources/strings.dart';
@@ -49,19 +51,26 @@ class DiscoverTab extends StatelessWidget {
         ),
         body: ListView(
          children: [
-            MomentOwnerSection(),
+            Consumer<DiscoverTabBloc>(
+              builder: (context,DiscoverTabBloc bloc,child) =>
+               MomentOwnerSection(
+                loggedInUser: bloc.loggedInUser ?? UserVO.empty(),
+               ),
+              ),
            Selector<DiscoverTabBloc,List<NewsFeedVO>>(
               selector: (context,bloc) => bloc.newsFeedList ?? [],
               shouldRebuild: (previous,next) => previous != next,
               builder: (context,newsFeedList,child) =>
               AllPostSection(
                 postList: newsFeedList,
+                postDetail: (postDetail){
+                 Navigator.of(context).push(OverlayPostDetail(postDetail: postDetail));       
+                },
                 favourite: (){
                   print("favourite tap");
                 },
                 comment: (){
-                  print("comment tap");
-                  Navigator.of(context).push(TutorialOverlay()).then((value){
+                  Navigator.of(context).push(OverlayComment()).then((value){
                     if(value != null){
                       DiscoverTabBloc bloc = Provider.of(context,listen: false);
                       bloc.commentedChanged(value);
@@ -73,7 +82,7 @@ class DiscoverTab extends StatelessWidget {
                 },
                 deletePost: (postId){
                   DiscoverTabBloc bloc = Provider.of(context,listen: false);
-                    bloc.deletePost(postId);
+                    bloc.deletePost(postId).then((value) => snackBarDataShow(context,SUCCESS_DELETE_MSG_TEXT));
                 },
               ),
              ),
@@ -82,12 +91,12 @@ class DiscoverTab extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class AllPostSection extends StatelessWidget {
 
   final List<NewsFeedVO> postList;
+  final Function(NewsFeedVO) postDetail;
   final Function favourite;
   final Function comment;
   final Function(int) editPost;
@@ -95,6 +104,7 @@ class AllPostSection extends StatelessWidget {
 
   AllPostSection({
     required this.postList,
+    required this.postDetail,
     required this.favourite,
     required this.comment,
     required this.editPost,
@@ -113,6 +123,7 @@ class AllPostSection extends StatelessWidget {
           return PostView(
             postList: postList,
             index: index,
+            postDetail: (){postDetail(postList[index]);},
             favourite: (){ favourite();},
             comment: (){comment();},
             editPost: (){editPost(postList[index].id ?? 0);},
@@ -134,10 +145,12 @@ class AllPostSection extends StatelessWidget {
   final Function comment;
   final Function editPost;
   final Function deletePost;
+  final Function postDetail;
 
    PostView({
      required this.postList,
      required this.index,
+     required this.postDetail,
      required this.favourite,
      required this.comment,
      required this.editPost,
@@ -146,54 +159,61 @@ class AllPostSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: (postList[index].post == "") ? MediaQuery.of(context).size.height * 0.52 : MediaQuery.of(context).size.height * 0.82,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Column(
-              children: [
-                PostTimeView(
-                  time: "$date",
-                  ),
-                Expanded(
-                  flex: (postList[index].post == "") ? 1 : 2,
-                  child: PostImageAndDescriptionView(
-                    post: postList[index],
-                    favourite: (){
-                      favourite();
-                    },
-                    comment: (){
-                      comment();
-                    },
-                    editPost: (){
-                       editPost();
-                    },
-                    deletePost: (){
-                       deletePost();
-                    },
+    return GestureDetector(
+      onTap: (){
+        postDetail();
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: (postList[index].post == "") ? MediaQuery.of(context).size.height * 0.52 : MediaQuery.of(context).size.height * 0.82,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Column(
+                children: [
+                  PostTimeView(
+                    isDetail: true,
+                    time: "$date",
                     ),
-                  ),
                   Expanded(
-                  child: ShowCommentSection(
-                    userList: postList,
-                    index: index,
-                  ),
-                  ),
-              ],
-            ),
-            ),
-
-
-            Positioned(
-              left: MARGIN_MEDIUM_1,
-              child: ChatHeadView(
-                image: "${postList[index].profileImage}",
-                 isChatPage: true,
-                 ),
-              )
-        ],
+                    flex: (postList[index].post == "") ? 1 : 2,
+                    child: PostImageAndDescriptionView(
+                      isDetail: false,
+                      post: postList[index],
+                      favourite: (){
+                        favourite();
+                      },
+                      comment: (){
+                        comment();
+                      },
+                      editPost: (){
+                         editPost();
+                      },
+                      deletePost: (){
+                         deletePost();
+                      },
+                      ),
+                    ),
+                    Expanded(
+                    child: ShowCommentSection(
+                      userList: postList,
+                      index: index,
+                    ),
+                    ),
+                ],
+              ),
+              ),
+    
+    
+              Positioned(
+                left: MARGIN_MEDIUM_1,
+                child: ChatHeadView(
+                  image: "${postList[index].profileImage}",
+                   isChatPage: true,
+                   ),
+                )
+          ],
+        ),
       ),
     );
   }
@@ -212,12 +232,12 @@ class ShowCommentSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 46),
+      padding:const EdgeInsets.symmetric(horizontal: DISCOVER_POST_COMMENT_SECTION_PADDING,vertical: MARGIN_MEDIUM),
       color: CONTACT_PAGE_BG_COLOR,
       child: ListView(
         children: [
           ReactCommentView(userList: userList),
-          SizedBox(height: 12,),
+         const SizedBox(height: MARGIN_MEDIUM,),
           TextComment(
             userList: userList,
           ),
@@ -240,10 +260,10 @@ class TextComment extends StatelessWidget {
        crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 20,
-          child: Icon(Icons.mode_comment_rounded,color: COMMENT_TEXT_COLOR,size: 20,),
+          width: COMMENT_SECTION_ICON_WIDTH,
+          child:const Icon(Icons.mode_comment_rounded,color: COMMENT_TEXT_COLOR,size: MARGIN_MEDIUM_2,),
         ),
-        SizedBox(width: 10,),
+       const SizedBox(width: MARGIN_SMALL_1X,),
         Expanded(
           child: Wrap(
             children: userList.map((user){
@@ -251,16 +271,16 @@ class TextComment extends StatelessWidget {
                 maxLines: 3,
                 text: TextSpan(
                   text: "${user.userName}, ",
-              style: TextStyle(
-                fontSize: 14,
+              style:const TextStyle(
+                fontSize: TEXT_MEDIUM,
                 color: COMMENT_TEXT_COLOR,
                 fontWeight: FontWeight.w500,
               ), 
              children: [
                TextSpan(
                  text: "${user.description}, ",
-              style: TextStyle(
-                fontSize: 14,
+              style:const TextStyle(
+                fontSize: TEXT_MEDIUM,
                 color: CHAT_HEAD_SUBTITLE_COLOR,
               ), 
                )
@@ -288,16 +308,16 @@ class ReactCommentView extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 20,
-          child: Icon(Icons.favorite,color: COMMENT_TEXT_COLOR,size: 20,),
+          width: COMMENT_SECTION_ICON_WIDTH,
+          child:const Icon(Icons.favorite,color: COMMENT_TEXT_COLOR,size: MARGIN_MEDIUM_2,),
         ),
-        SizedBox(width: 10,),
+       const SizedBox(width: MARGIN_SMALL_1X,),
         Expanded(
           child: Wrap(
             children: userList.map((user){
               return Text("${user.userName}, ",
-              style: TextStyle(
-                fontSize: 14,
+              style:const TextStyle(
+                fontSize: TEXT_MEDIUM,
                 color: COMMENT_TEXT_COLOR,
                 fontWeight: FontWeight.w500,
               ),
@@ -318,6 +338,7 @@ class PostImageAndDescriptionView extends StatelessWidget {
     required this.comment,
     required this.editPost,
     required this.deletePost,
+    required this.isDetail,
   }) : super(key: key);
 
   final NewsFeedVO post;
@@ -325,30 +346,33 @@ class PostImageAndDescriptionView extends StatelessWidget {
   final Function comment;
   final Function editPost;
   final Function deletePost;
+  final bool isDetail;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16,vertical: 8),
-      color: Colors.white,
+      padding:const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1,vertical: MARGIN_SMALL_1),
+      color: (isDetail) ? Colors.transparent : Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 56),
+            padding: const EdgeInsets.only(left: DISCOVER_POST_USER_NAME_PADDING),
             child: PersonNameView(name: post.userName ?? ""),
           ),
-          SizedBox(height: 8),
+         const SizedBox(height: MARGIN_SMALL_1),
           Expanded(
             child: PersonDescriptionView(
               description: post.description ?? "",
               isChatPage: false,
+              isMomentDescription: true,
               ),
           ),
             SizedBox(height: 12,),
            PostImageView(post: post),
            FavouriteAndCommectSection(
+            isDetail: isDetail,
              favourite: () => favourite(),
              comment: ()=> comment(),
              editPost: ()=> editPost(),
@@ -366,8 +390,10 @@ class FavouriteAndCommectSection extends StatelessWidget {
   final Function comment;
   final Function editPost;
   final Function deletePost;
+  final bool isDetail;
 
   FavouriteAndCommectSection({
+    required this.isDetail,
     required this.favourite,
     required this.comment,
     required this.editPost,
@@ -451,10 +477,10 @@ class PostImageView extends StatelessWidget {
       height: (post.post == "") ? 0 : MediaQuery.of(context).size.height * 0.3,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
         color: ME_TAB_PROFILE_BG_COLOR,
       ),
-      child:(post.fileType == "jpg" || post.fileType == "png" || post.fileType == "jpeg" || post.fileType == ".jpg") 
+      child:(post.fileType == "jpg" || post.fileType == "png" || post.fileType == "jpeg" || post.fileType == ".jpg" || post.fileType == "gif") 
       ? (post.post == "" || post.post == null) ? Container() : Image.network(post.post ?? "",
       fit: BoxFit.cover,
       )
@@ -469,9 +495,11 @@ class PostImageView extends StatelessWidget {
 class PostTimeView extends StatelessWidget {
  
   final String time;
+  final bool isDetail;
 
   PostTimeView({
     required this.time,
+    required this.isDetail,
   });
 
   @override
@@ -480,7 +508,7 @@ class PostTimeView extends StatelessWidget {
       alignment: Alignment.centerRight,
       width: MediaQuery.of(context).size.width,
       height: 24,
-      color: CONTACT_PAGE_BG_COLOR,
+      color: (isDetail) ? Colors.transparent : CONTACT_PAGE_BG_COLOR,
       child: Padding(
         padding: const EdgeInsets.only(right: MARGIN_MEDIUM_1),
         child: Text(time,
@@ -495,6 +523,13 @@ class PostTimeView extends StatelessWidget {
 }
 
 class MomentOwnerSection extends StatelessWidget {
+
+  final UserVO loggedInUser;
+
+  MomentOwnerSection({
+    required this.loggedInUser,
+  });
+
 
   @override
   Widget build(BuildContext context) {
@@ -511,13 +546,17 @@ class MomentOwnerSection extends StatelessWidget {
             Positioned(
               left: MediaQuery.of(context).size.width * 0.18,
               top: MediaQuery.of(context).size.height * 0.22,
-              child: MomentOwnerProfile(),
+              child: MomentOwnerProfile(
+                image: loggedInUser.profileImage ?? CONSTANT_IMAGE,
+              ),
               ),
 
               Positioned(
                 right: 16,
                 top: MediaQuery.of(context).size.height * 0.23,
-                child: MomentOwnerInfoSection(),
+                child: MomentOwnerInfoSection(
+                  name: loggedInUser.userName ?? "",
+                ),
                   ),
         ],
       ),
@@ -547,18 +586,29 @@ class CoverPhotoSection extends StatelessWidget {
 
 class MomentOwnerProfile extends StatelessWidget {
 
+  final String image;
+
+  MomentOwnerProfile({
+    required this.image,
+  });
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 42,
       backgroundColor: ME_TAB_PROFILE_BG_COLOR,
-      backgroundImage: NetworkImage("https://preview.keenthemes.com/metronic-v4/theme_rtl/assets/pages/media/profile/profile_user.jpg"),
+      backgroundImage: NetworkImage(image),
     );
   }
 }
 
 class MomentOwnerInfoSection extends StatelessWidget {
+
+  final String name;
+
+  MomentOwnerInfoSection({
+    required this.name,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -566,7 +616,7 @@ class MomentOwnerInfoSection extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text("Nina Rocha",
+          Text(name,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -599,7 +649,7 @@ class MomentShowDateView extends StatelessWidget {
      style: TextStyle(
       color: Colors.black,
       fontWeight: FontWeight.w400,
-      fontSize: 14,
+      fontSize: TEXT_MEDIUM,
     ),
     );
   }
