@@ -10,6 +10,7 @@ import 'package:we_chat_app/network/we_chat_data_agent.dart';
 const newsFeedCollection = "newsfeed";
 const fileUpload = "uploads";
 const userCollection = "users";
+const contactCollection = "contacts";
 
 class CloudNewsFeedDataAgentImpl extends WeChatDataAgent{
 
@@ -83,18 +84,6 @@ class CloudNewsFeedDataAgentImpl extends WeChatDataAgent{
         return NewsFeedVO.fromJson(documentSnapshot.data()!);
       });
   }
-    @override
-  Stream<UserVO> getUserById(String id) {
-    return cloudFirestore
-      .collection(userCollection)
-      .doc(id)
-      .get()
-      .asStream()
-      .where((documentSnapshot) => documentSnapshot.data() != null)
-      .map((documentSnapshot){
-        return UserVO.fromJson(documentSnapshot.data()!);
-      });
-  }
 
   ///Auth
 
@@ -149,17 +138,42 @@ class CloudNewsFeedDataAgentImpl extends WeChatDataAgent{
   
   ///User
 
-  // @override
-  // Stream<UserVO> getUserById(String id) {
-  //   return cloudFirestore
-  //     .collection(userCollection)
-  //     .doc(id)
-  //     .get()
-  //     .asStream()
-  //     .where((documentSnapshot) => documentSnapshot.data() != null)
-  //     .map((documentSnapshot){
-  //       return UserVO.fromJson(documentSnapshot.data()!);
-  //     });
-  // }
+    @override
+  Stream<UserVO> getUserById(String id) {
+    return cloudFirestore
+      .collection(userCollection)
+      .doc(id)
+      .get()
+      .asStream()
+      .where((documentSnapshot) => documentSnapshot.data() != null)
+      .map((documentSnapshot){
+        return UserVO.fromJson(documentSnapshot.data()!);
+      });
+  }
+  
+  @override
+  Future<void> addContact(UserVO owner,UserVO friend) {
+    return cloudFirestore
+      .collection(userCollection)
+      .doc(owner.id.toString())
+      .collection(contactCollection)
+      .doc(friend.id.toString())
+      .set(friend.toJson());
+  }
+  
+  @override
+  Stream<List<UserVO>> getAllContact(String id) {
+    return cloudFirestore
+      .collection(userCollection)
+      .doc(id)
+      .collection(contactCollection)
+      .snapshots()
+      .map((querySnapshot){
+        return querySnapshot.docs.map<UserVO>((document){
+          return UserVO.fromJson(document.data());
+        }).toList();
+      });
+  }
+
 
 }

@@ -8,6 +8,10 @@ import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 
 class EmailPageBloc extends ChangeNotifier{
 
+  
+  bool isLoading = false;
+  bool isDisposed = false;
+
   TextEditingController emailController = TextEditingController();
 
   GlobalKey<FormState> emailFormKey = GlobalKey<FormState>();
@@ -18,7 +22,25 @@ class EmailPageBloc extends ChangeNotifier{
 
 
   Future<void> registerUser(UserVO user,File pickedFile){
-     return authModel.registerNewUser(user, pickedFile);
+      isLoading = true;
+      _notifySafely();
+     return authModel.registerNewUser(user, pickedFile).whenComplete((){
+      isLoading = false;
+      _notifySafely();
+     });
    }
+
+
+    _notifySafely(){
+      if(!isDisposed){
+        notifyListeners();
+      }
+    }
+
+    @override
+  void dispose() {
+    super.dispose();
+    isDisposed = true;
+  }
 
 }

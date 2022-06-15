@@ -106,5 +106,15 @@ class CloudNewsFeedModelImpl extends WeChatModel{
     return dataAgent.getUserById(id);
   }
   
+  @override
+  Future<void> addContact(UserVO owner, UserVO friend) {
+    return dataAgent.addContact(owner, friend);
+  }
+  
+  @override
+  Stream<List<UserVO>> getAllContact(String id) {
+   return dataAgent.getAllContact(id);
+  }
+  
 
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:we_chat_app/resources/colors.dart';
 import 'package:we_chat_app/resources/strings.dart';
 
 class ChatHeadView extends StatelessWidget {
@@ -18,6 +19,7 @@ class ChatHeadView extends StatelessWidget {
       height: (isChatPage) ? 50 : 30,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
+        color: ME_TAB_PROFILE_BG_COLOR,
         borderRadius: BorderRadius.circular((isChatPage) ? 25 : 15),
       ),
       child: Image.network( (image == "") ? CONSTANT_IMAGE : image,

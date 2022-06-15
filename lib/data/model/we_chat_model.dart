@@ -13,5 +13,7 @@ abstract class WeChatModel{
 
   ///User
   Stream<UserVO> getUserById(String id);
+  Future<void> addContact(UserVO owner,UserVO friend);
+  Stream<List<UserVO>> getAllContact(String id);
 
 }

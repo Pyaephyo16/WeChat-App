@@ -71,6 +71,7 @@ class MeTab extends StatelessWidget {
                       color: PRIMARY_COLOR,
                       child:  ProfileAppBarView(
                         qrTouch: (){
+                          print("qr check me tab ===========> ${bloc.loggedInUser?.qrCode}");
                           navigateToNextScreen(context,QrCodePage(loggedInUser: bloc.loggedInUser ?? UserVO.empty(),));
                         },
                         loggedInUser: bloc.loggedInUser ?? UserVO.empty(),

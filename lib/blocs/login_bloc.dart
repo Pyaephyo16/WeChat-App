@@ -7,6 +7,7 @@ class LoginBloc extends ChangeNotifier{
 
   bool isDisposed = false;
   bool isShowPassword = true;
+  bool isLoading = false;
 
   TextEditingController lgEmailController = TextEditingController();
   TextEditingController lgPasswordController = TextEditingController();
@@ -19,7 +20,12 @@ class LoginBloc extends ChangeNotifier{
     AuthModel authModel = AuthModelImpl();
 
   Future<void> tapLogin(String email,String password){
-    return authModel.loginUser(email, password);
+      isLoading = true;
+      _notifySafely();
+    return authModel.loginUser(email, password).whenComplete((){
+        isLoading = false;
+        _notifySafely();
+    });
   }
 
  showPassword(){

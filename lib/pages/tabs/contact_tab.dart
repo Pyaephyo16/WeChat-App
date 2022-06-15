@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:we_chat_app/blocs/contact_tab_bloc.dart';
+import 'package:we_chat_app/data/vos/az_vo/az_user_vo.dart';
+import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/dummy/az_item_vo.dart';
 import 'package:we_chat_app/dummy/dummy_data.dart';
 import 'package:we_chat_app/pages/conversation_page.dart';
@@ -51,21 +53,30 @@ class ContactTab extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(height: MARGIN_SMALL_1,),
-              ContactRowView(),
+             const SizedBox(height: MARGIN_SMALL_1,),
+             const ContactRowView(),
               Expanded(
-                child: Selector<ContactTabBloc,List<AZItemVO>>(
-                  selector: (context,bloc) => bloc.filterList ??  [],
-                  shouldRebuild: (previous,next) => previous != next,
-                  builder: (context,alphabetList,child){
-                   return ContactSection(
-                    user: alphabetList,
-                    onClick: (user){
-                  navigateToNextScreen(context,ConservationPage(user: user));
-                    },
-                  );
-                  }
-                  
+                child: Selector<ContactTabBloc,UserVO>(
+                    selector: (context,bloc) => bloc.loggedInUser ??  UserVO.empty(),
+                    shouldRebuild: (previous,next) => previous != next,
+                    builder: (context,loggedInUser,child) =>
+                   Selector<ContactTabBloc,List<AZUserVO>>(
+                    selector: (context,bloc) => bloc.azContactList ??  [],
+                    shouldRebuild: (previous,next) => previous != next,
+                    builder: (context,azContactList,child){
+                     return (azContactList.length == 0 || azContactList == null) ?
+                    const NoFriendView() 
+                    :  ContactSection(
+                      user: azContactList,
+                      onClick: (user){
+                    navigateToNextScreen(
+                      context,
+                      ConservationPage(friend: user,loggedInUser: loggedInUser,));
+                      },
+                    );
+                    }
+                    
+                  ),
                 ),
                 )
             ],
@@ -76,11 +87,28 @@ class ContactTab extends StatelessWidget {
   }
 }
 
+class NoFriendView extends StatelessWidget {
+  const NoFriendView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("No friend",
+     style: TextStyle(
+       fontSize: MARGIN_MEDIUM_1,
+       color: Colors.black,
+       fontWeight: FontWeight.w600,
+     ),
+     ),);
+  }
+}
+
 class ContactSection extends StatelessWidget {
 
 
-  final List<AZItemVO> user;
-  final Function(UserDummyVO) onClick;
+  final List<AZUserVO> user;
+  final Function(UserVO) onClick;
 
   ContactSection({
     required this.user,
@@ -170,7 +198,7 @@ class ContactPeopleShowView extends StatelessWidget {
     required this.onClick,
   }) : super(key: key);
 
-  final List<AZItemVO> user;
+  final List<AZUserVO> user;
   final int index;
   final String tag;
   final bool offStage;
@@ -210,7 +238,7 @@ class ContactPeopleShowView extends StatelessWidget {
          Row(
            children: [
              ChatHeadView(
-               image: user[index].person.image ?? "",
+               image: user[index].person.profileImage ?? CONSTANT_IMAGE,
                 isChatPage: true,
                ),
               const SizedBox(width: MARGIN_MEDIUM,),
@@ -219,7 +247,7 @@ class ContactPeopleShowView extends StatelessWidget {
                    crossAxisAlignment: CrossAxisAlignment.start,
                    mainAxisSize: MainAxisSize.min,
                    children: [
-                     Text(user[index].person.name ?? "",
+                     Text(user[index].person.userName ?? "",
                       style: TextStyle(
                          color: Colors.black,
                          fontWeight: FontWeight.w500,

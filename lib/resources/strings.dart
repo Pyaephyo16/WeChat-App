@@ -37,6 +37,7 @@ const String SIGNUP_TEXT = "Signup";
 const String LOGIN_TEXT = "Login";
 const String LOGIN_TITLE_TEXT = "Log In Via Email Address";
 const String LOGIN_PAGE_MARK_TEXT = "The above email address is used only for login verification";
+const String ALREADY_EXIST_TEXT = "This account is already exist in your account";
 
 
 const String CONSTANT_IMAGE = "https://i.pinimg.com/564x/1b/14/34/1b1434c7d78bca9e24bcb89e5126903c.jpg";

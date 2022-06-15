@@ -164,20 +164,7 @@ class AddNewPostPage extends StatelessWidget {
 
             Visibility(
               visible: isLoading,
-              child: Center(
-                child: Container(
-                  alignment: Alignment.center,
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: DISABLED_BTN_COLOR,
-                  ),
-                  child: SpinKitFadingCircle(
-                    color: PRIMARY_COLOR,
-                  ),
-                ),
-              ),
+              child:const LoadingShowView(),
               ),
 
            ],
@@ -284,6 +271,30 @@ class AddNewPostPage extends StatelessWidget {
             ],
           );
         });
+  }
+}
+
+class LoadingShowView extends StatelessWidget {
+  const LoadingShowView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        alignment: Alignment.center,
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: DISABLED_BTN_COLOR,
+        ),
+        child: SpinKitFadingCircle(
+          color: PRIMARY_COLOR,
+        ),
+      ),
+    );
   }
 }
 

@@ -5,14 +5,18 @@ import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 import 'package:we_chat_app/blocs/conservation_page_bloc.dart';
 import 'package:we_chat_app/data/vos/conservation_fun_icon_vo.dart';
+import 'package:we_chat_app/data/vos/message_vo/message_vo.dart';
+import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/dummy/dummy_data.dart';
 import 'package:we_chat_app/resources/colors.dart';
 import 'package:we_chat_app/resources/dimens.dart';
 import 'package:we_chat_app/resources/strings.dart';
 import 'package:we_chat_app/view_items/app_bar_title_view.dart';
 import 'package:we_chat_app/view_items/chat_head_view.dart';
+import 'package:we_chat_app/utils/extension.dart';
 import 'package:path/path.dart' as p;
 
 
@@ -64,16 +68,18 @@ ConservationFunIconVO(
 
 class ConservationPage extends StatelessWidget {
 
-  final UserDummyVO user;
+  final UserVO friend;
+  final UserVO loggedInUser;
 
   ConservationPage({
-    required this.user,
+    required this.friend,
+    required this.loggedInUser,
   });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ConservationPageBloc(),
+      create: (context) => ConservationPageBloc(loggedInUser,friend),
       child: Scaffold(
         appBar: AppBar(
           elevation: 1,
@@ -85,7 +91,7 @@ class ConservationPage extends StatelessWidget {
             },
           ),
           centerTitle: true,
-          title: AppBarTitleView(title: user.name ?? ""),
+          title: AppBarTitleView(title: friend.userName ?? ""),
           actions: [
             IconButton(
               onPressed: (){},
@@ -96,13 +102,14 @@ class ConservationPage extends StatelessWidget {
         body: Column(
           children: [
             Expanded(
-              child: Selector<ConservationPageBloc,List<MessageDummyVO>>(
-                  selector: (context,bloc) => bloc.messagesDummy,
+              child: Selector<ConservationPageBloc,List<MessageVO>>(
+                  selector: (context,bloc) => bloc.messageList ?? [],
                   shouldRebuild: (previous,next) => previous != next,
-                  builder: (context,messageDummy,child) =>
+                  builder: (context,messageList,child) =>
+                (messageList == null) ? Container() : 
                 ConsevationSection(
-                  user: user,
-                  message: messageDummy.reversed.toList(),
+                  user: friend,
+                  message: messageList.reversed.toList(),
                   ),
               ),
             ),
@@ -126,6 +133,16 @@ class ConservationPage extends StatelessWidget {
                      msgController: bloc.msgController,
                      userText: bloc.userText,
                       chooseFile: bloc.pickedFile,
+                      submitted: (str){
+                        ConservationPageBloc _cBloc = Provider.of(context,listen: false);
+                        _cBloc.sendMessage(
+                          loggedInUser,
+                          friend,
+                          emptyCallBack: (){
+                              errorSnackBar(context,"Can\'t be send");
+                          },
+                          );
+                      },
                     typeData: (text){
                    ConservationPageBloc _changeBloc = Provider.of(context,listen: false);
                    _changeBloc.onTextChanged(text);
@@ -145,26 +162,26 @@ class ConservationPage extends StatelessWidget {
               selector: (context,bloc) => bloc.isAddTap,
               shouldRebuild: (previous,next) => previous != next,
               builder: (context,isAddTap,child) =>
-              AddMoreIconView(
-                isAddTap: isAddTap,
-                tapped: (index)async{
-              if(index == 0){
-                FilePickerResult? result = await FilePicker.platform.pickFiles();
-                 if (result != null) {
-                    ConservationPageBloc bloc = Provider.of(context,listen: false);
-                    bloc.fileChosen(File(result.files.single.path!),result.files.single.extension!);
+                 AddMoreIconView(
+                  isAddTap: isAddTap,
+                  tapped: (index)async{
+                if(index == 0){
+                  FilePickerResult? result = await FilePicker.platform.pickFiles();
+                   if (result != null) {
+                      ConservationPageBloc bloc = Provider.of(context,listen: false);
+                      bloc.fileChosen(File(result.files.single.path!),result.files.single.extension!);
+                     }
+                }else if(index == 1){
+                  final imagePicker = ImagePicker();
+                  final XFile? cameraImage =await imagePicker.pickImage(source: ImageSource.camera,imageQuality: 80);
+                   if(cameraImage !=null){
+                      ConservationPageBloc bloc = Provider.of(context,listen: false);
+                      final cameraFileType = p.extension(cameraImage.path);
+                      bloc.fileChosen(File(cameraImage.path),cameraFileType);
                    }
-              }else if(index == 1){
-                final imagePicker = ImagePicker();
-                final XFile? cameraImage =await imagePicker.pickImage(source: ImageSource.camera,imageQuality: 80);
-                 if(cameraImage !=null){
-                    ConservationPageBloc bloc = Provider.of(context,listen: false);
-                    final cameraFileType = p.extension(cameraImage.path);
-                    bloc.fileChosen(File(cameraImage.path),cameraFileType);
-                 }
-              }
-                },
-              ),
+                }
+                  },
+                ),
             )
           ],
         ),
@@ -324,8 +341,8 @@ class ConsevationSection extends StatelessWidget {
     required this.message,
   }) : super(key: key);
 
-  final UserDummyVO user;
-  final List<MessageDummyVO> message;
+  final UserVO user;
+  final List<MessageVO> message;
 
   @override
   Widget build(BuildContext context) {
@@ -336,7 +353,7 @@ class ConsevationSection extends StatelessWidget {
         reverse: true,
           itemCount: message.length,
           itemBuilder: (BuildContext context,int index){
-            final bool isFriend = user.id == message[index].sender?.id;
+            final bool isFriend = user.id == message[index].id;
             return TextMsgShowView(
                 isFriend: isFriend,
                 index: index,
@@ -352,7 +369,7 @@ class ConsevationSection extends StatelessWidget {
 class TextMsgShowView extends StatelessWidget {
 
   final bool isFriend;
-  final MessageDummyVO message;
+  final MessageVO message;
   final int index;
 
   TextMsgShowView({
@@ -369,10 +386,11 @@ class TextMsgShowView extends StatelessWidget {
             flex: 1,
             child: Visibility(
               visible: (isFriend) ? true : false,
-              child: ChatHeadView(image: message.sender?.image ?? "", isChatPage: false))),
+              child: ChatHeadView(image: message.profileImge ?? "", isChatPage: false))),
           Expanded(
             flex: 10,
             child: Container(
+              //alignment: (isFriend) ? Alignment.centerLeft : Alignment.centerRight,
               margin: (isFriend) ? 
              const EdgeInsets.only(right: MARGIN_SIZE_FOR_CHAT,top: MARGIN_SMALL_1,bottom: MARGIN_SMALL_1) :
               const EdgeInsets.only(left: MARGIN_SIZE_FOR_CHAT,top: MARGIN_SMALL_1,bottom: MARGIN_SMALL_1),
@@ -381,17 +399,37 @@ class TextMsgShowView extends StatelessWidget {
                 color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text("${message.msg}",
+              child: Column(
+                crossAxisAlignment: (isFriend) ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  showText(message),
+              Text("${message.message}",
+              //textAlign: (isFriend) ? TextAlign.left : TextAlign.right,
               style:const TextStyle(
                 fontSize: TEXT_MEDIUM_1,
                 fontWeight: FontWeight.w500,
               ),
               ),
+                ],
+              )
             ),
           ),
         ],
       );
   }
+
+   Widget showText(MessageVO message){
+    return (message.fileType == "jpg" || message.fileType == "png" || message.fileType == "jpeg" || message.fileType == ".jpg" || message.fileType == "gif") ? Image.network(message.post ?? "",
+         fit: BoxFit.cover,
+         )
+         : (message.fileType == "mp4") ? FlickVideoPlayer(flickManager: FlickManager(
+                                videoPlayerController:
+                                    VideoPlayerController.network(
+                                        message.post!),
+                                autoPlay: false))
+         : Container();
+  } 
 }
 
 
@@ -404,6 +442,7 @@ class TextFieldView extends StatelessWidget {
   final Function(String) typeData;
   final Function send;
   final Function add;
+  final Function submitted;
 
   TextFieldView({
     required this.msgController,
@@ -412,6 +451,7 @@ class TextFieldView extends StatelessWidget {
     required this.typeData,
     required this.send,
     required this.add,
+    required this.submitted,
   });
 
   @override
@@ -445,23 +485,28 @@ class TextFieldView extends StatelessWidget {
                    fontSize: TEXT_MEDIUM_1X,
                    fontWeight: FontWeight.w500,
                  ),
+                 onSubmitted: (str){
+                  submitted(str);
+                 },
                  onChanged: (text){
                    typeData(text);
                  },
               ),
           ),
-        (userText ==  ""  && chooseFile == null) ? IconButton(
+        //(userText ==  ""  && chooseFile == null) ? 
+        IconButton(
            onPressed: (){
               add();
            },
             icon:const Icon(Icons.add,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
-            ) :
-             IconButton(
-           onPressed: (){
-              send();
-           },
-            icon:const Icon(Icons.send,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
-            ),  
+            ) 
+          //   :
+          //    IconButton(
+          //  onPressed: (){
+          //     send();
+          //  },
+          //   icon:const Icon(Icons.send,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
+          //   ),  
      ],
                   ),
                 ),
