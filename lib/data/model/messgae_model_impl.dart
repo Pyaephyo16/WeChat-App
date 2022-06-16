@@ -56,7 +56,7 @@ class MessageModelImpl extends MessageModel{
   }
   
   @override
-  Future<List<String>> getConversationUser(String loggedInUserId) {
+  Stream<List<String?>> getConversationUser(String loggedInUserId) {
     return messageDataAgent.getConversationUser(loggedInUserId);
   }
   

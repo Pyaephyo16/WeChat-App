@@ -52,25 +52,32 @@ class RealTimeMessageDataAgentImpl extends MessageDataAgent{
   }
   
   @override
-  Future<List<String>> getConversationUser(String loggedInUserId) {
+  Stream<List<String?>> getConversationUser(String loggedInUserId) {
     return firebase
       .child(contactsAndMessagesCollection)
       .child(loggedInUserId)
-      .get()
-      .then((value){
-          return parseData(value);
+      .onValue
+      .map((event){
+        return event.snapshot.children.map((snapshot){
+            return snapshot.key;
+        }).toList();
       });
+
+      // .get()
+      // .then((value){
+      //     return parseData(value);
+      // });
   }
 
-    List<String> parseData(DataSnapshot snapshot){
-        List<String> contacts = [];
-        Map<String,dynamic> maps = Map<String,dynamic>.from(snapshot.value as Map);
+    // List<String> parseData(DataSnapshot snapshot){
+    //     List<String> contacts = [];
+    //     Map<String,dynamic> maps = Map<String,dynamic>.from(snapshot.value as Map);
       
-        maps.keys.forEach((element) {
-          contacts.add(element);
-        });
-        return contacts;
-    }
+    //     maps.keys.forEach((element) {
+    //       contacts.add(element);
+    //     });
+    //     return contacts;
+    // }
  
 
 }

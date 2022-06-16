@@ -7,6 +7,6 @@ abstract class MessageModel{
 
  void sendMessage(String loggedInUserId,String friendId,MessageVO message,File? pickedFile,String? fileType);
  Stream<List<MessageVO>> getAllMessage(String loggedInUserId,String friendId);
- Future<List<String>> getConversationUser(String loggedInUserId);
+ Stream<List<String?>> getConversationUser(String loggedInUserId);
 
 }

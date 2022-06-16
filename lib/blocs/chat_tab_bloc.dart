@@ -16,7 +16,7 @@ class ChatTabBloc extends ChangeNotifier{
 
  UserVO? loggedInUser;
  List<ChatHistoryVO> chatHistory = [];
- List<ChatHistoryVO> temp = [];
+  List<ChatHistoryVO> temp = [];
  bool isDisposed = false;
 
     ///Model
@@ -42,10 +42,11 @@ class ChatTabBloc extends ChangeNotifier{
       });
 
        auth.getLoggedInUser().then((value){
-            msgModel.getConversationUser(value.id ?? "").then((event){
-              print("conversation friend id list ====> $event");
+            msgModel.getConversationUser(value.id ?? "").listen((event){
+                if(event.length != 0){
+                   print("conversation friend id list ====> $event");
                 event.forEach((element) {
-                    weChatModel.getUserById(element).listen((friend){
+                    weChatModel.getUserById(element!).listen((friend){
                       msgModel.getAllMessage(value.id ?? "",element).listen((data) {
                           temp.add(
                               ChatHistoryVO(
@@ -54,14 +55,15 @@ class ChatTabBloc extends ChangeNotifier{
                                 messages: data,
                                 ),
                           );
-                          chatHistory = temp;
-                _notifySafely();
+            chatHistory = temp;
                 print("check history ===> $chatHistory");
+                print("check history  length ===> ${chatHistory.length}");
+                _notifySafely();
                     });
                     });
                 });
+                }
             });
-            _notifySafely();
       });
     
 
