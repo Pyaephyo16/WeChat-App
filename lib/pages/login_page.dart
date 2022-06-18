@@ -43,14 +43,14 @@ class LoginPage extends StatelessWidget {
                     builder: (context,LoginBloc bloc,child) =>
                     Column(
                       children: [
-                          const SizedBox(height: 100,),
+                          const SizedBox(height: MARGIN_SIZE_FOR_CHAT,),
                           Center(child: TitleTextView(titleText: LOGIN_TITLE_TEXT)),
-                           const SizedBox(height: 64,),
+                           const SizedBox(height: MARGIN_FOR_LOGIN_PAGE_SPACING,),
                           TextFieldForRegisterAndLoginView(
                             formKey: bloc.lgEmailFormKey,
                             controller: bloc.lgEmailController,
-                            hintText: "Enter Your Email",
-                            title: "Email",
+                            hintText: EMAIL_PAGE_HINT_TEXT,
+                            title: EMAIL_TEXT,
                             isPassword: false,
                             isPhone: false,
                             isEmail: true,
@@ -58,12 +58,12 @@ class LoginPage extends StatelessWidget {
                             showPassword: (){},
                             isShowPassword: false,
                             ),
-                              const SizedBox(height: 22,),
+                              const SizedBox(height: MARGIN_MEDIUM_2X,),
                           TextFieldForRegisterAndLoginView(
                             formKey: bloc.lgPasswordFormKey,
                             controller: bloc.lgPasswordController,
-                            hintText: "Enter Password",
-                            title: "Password",
+                            hintText: ENTER_PASSWORD_TEXT,
+                            title: PASSWORD_TEXT,
                             isPassword: true,
                             isPhone: false,
                             isEmail: false,
@@ -76,15 +76,13 @@ class LoginPage extends StatelessWidget {
                             ),
                             const Spacer(),
                             PrivacyContentView(text: LOGIN_PAGE_MARK_TEXT),
-                            const SizedBox(height: 26,),
+                            const SizedBox(height: MARGIN_SIZE_FOR_APP_BAR_ICON,),
                             Builder(
                               builder: (context) =>
                                AcceptAndContinueButtonView(
                                 onClick: (){
                                   if( (bloc.lgEmailFormKey.currentState!.validate())
                                    && (bloc.lgPasswordFormKey.currentState!.validate()) ){
-                            
-                                    ///Need network call
                                    LoginBloc bloc = Provider.of(context,listen: false);
                                     bloc.tapLogin(bloc.lgEmailController.text,bloc.lgPasswordController.text)
                                     .then((value) => 
@@ -95,10 +93,10 @@ class LoginPage extends StatelessWidget {
                                    }
                                 },
                                  isAccept: true,
-                                  text: "Accept and Continue"
+                                  text: ACCEPT_AND_CONTINUER_TEXT,
                                   ),
                             ),
-                             const SizedBox(height: 64,),
+                             const SizedBox(height: MARGIN_FOR_LOGIN_PAGE_SPACING,),
                       ],
                     ),
                   ),

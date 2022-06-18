@@ -38,6 +38,33 @@ const String LOGIN_TEXT = "Login";
 const String LOGIN_TITLE_TEXT = "Log In Via Email Address";
 const String LOGIN_PAGE_MARK_TEXT = "The above email address is used only for login verification";
 const String ALREADY_EXIST_TEXT = "This account is already exist in your account";
+const String EMAIL_PAGE_TITLE_TEXT = "Enter Your Email Address";
+const String EMAIL_PAGE_HINT_TEXT = "Enter your email";
+const String EMAIL_TEXT = "Email";
+const String DONE_TEXT = "Done";
+const String START_TEXT = "Start";
+const String PRIVACY_POLICY_TEXT = "Privacy Policy";
+const String WE_CHAT_PRIVACY_TEXT = "WECHAT PRIVACY POLICY";
+const String TERMS_OF_SERVICE_TEXT = "I have read and accept the above terms";
+const String NEXT_TEXT = "Next";
+const String REGION_TEXT = "Region";
+const String PASSWORD_TEXT = "Password";
+const String ENTER_PASSWORD_TEXT = "Enter Password";
+const String ACCEPT_AND_CONTINUER_TEXT = "Accept and Continue";
+const String QR_CODE_TEXT = "QR Code";
+const String SIGN_UP_BY_PHONE_TEXT = "Sign up by phone number";
+const String ENTER_NAME_TEXT = "Enter name";
+const String NAME_TEXT = "Name";
+const String ENTER_PHONE_TEXT = "Enter Phone Number";
+const String PHONE_TEXT = "Phone";
+const String PROFILE_IMAGE_WARNING_TEXT = "You need to select Profile Image";
+const String GALLERY_TEXT = "Gallery";
+const String TERMS_OF_SERVICE_NOTE_TEXT =  "The information collected on this page is only used for account registration.";
+const String I_HAVE_READ_TEXT = "I have read and accept the ";
+const String TERMS_OF_SERVICE_SHOW_TEXT = "<<Terms of Service>>";
+const String CHOOSE_REGION_TEXT =  "Choose Region";
+const String QR_SCANNER_TEXT = "QR Scanner";
+const String SCAN_A_CODE_TEXT = "Scan a code";
 
 
 const String CONSTANT_IMAGE = "https://i.pinimg.com/564x/1b/14/34/1b1434c7d78bca9e24bcb89e5126903c.jpg";
@@ -75,3 +102,8 @@ const String WEIXIN_USER_CONTENT = "You can also check whether you are a WeChat 
 ///Varification
 const String SECURITY_VARIFICATION_TEXT = "Security Varification";
 const String SECURITY_VARIFICATION_CONTENT = "Forthe security of your account,verify security verification code before registration";
+
+
+///Privacy Policy
+const String LAST_UPDATE_DATE_TEXT = "Last Updated: 202-03-22";
+const String SUMMARY_TEXT = "Summary";

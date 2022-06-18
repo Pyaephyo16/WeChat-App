@@ -56,7 +56,7 @@ class _ScannerPageState extends State<ScannerPage> {
         appBar: AppBar(
           elevation: 1,
           backgroundColor: PRIMARY_COLOR,
-          title: AppBarTitleView(title: "QR Scanner"),
+          title: AppBarTitleView(title: QR_SCANNER_TEXT),
           centerTitle: true,
           leading: IconButton(
                     icon:const FaIcon(FontAwesomeIcons.xmark,color: Colors.white,),
@@ -84,7 +84,7 @@ class _ScannerPageState extends State<ScannerPage> {
                     alreadyExist: (){
                        ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                         content: Text(ALREADY_EXIST_TEXT),
+                         content:const Text(ALREADY_EXIST_TEXT),
                         backgroundColor: Colors.green.withOpacity(0.8),
                       ),
     );
@@ -94,18 +94,18 @@ class _ScannerPageState extends State<ScannerPage> {
                 ),
 
                Positioned(
-                 bottom: 40,
-                 child: Text( (bloc.barcode != null) ?  " ${bloc.barcode!.code}" : "Scan a code",
-                 style: TextStyle(
+                 bottom: MARGIN_SIZE_FOR_REGISTER_SPACEING,
+                 child: Text( (bloc.barcode != null) ?  " ${bloc.barcode!.code}" : SCAN_A_CODE_TEXT,
+                 style:const TextStyle(
                    color: Colors.white,
-                   fontSize: 18,
+                   fontSize: TEXT_MEDIUM_1X,
                  ),
                  ),
                  ),
 
                  Visibility(
                   visible: bloc.isLoading,
-                  child: LoadingShowView(),
+                  child:const LoadingShowView(),
                   ),
            ],
           ),
@@ -120,9 +120,9 @@ class _ScannerPageState extends State<ScannerPage> {
     onQRViewCreated: onQRViewCreated,
     overlay: QrScannerOverlayShape(
       borderColor: PRIMARY_COLOR,
-     borderWidth: 10,
-     borderLength: 20,
-     borderRadius: 10,
+     borderWidth: MARGIN_SMALL_1X,
+     borderLength: MARGIN_MEDIUM_2,
+     borderRadius: MARGIN_SMALL_1X,
      cutOutSize: MediaQuery.of(context).size.width * 0.8,
    
     ),

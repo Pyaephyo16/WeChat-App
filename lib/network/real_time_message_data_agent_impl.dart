@@ -62,22 +62,21 @@ class RealTimeMessageDataAgentImpl extends MessageDataAgent{
             return snapshot.key;
         }).toList();
       });
-
-      // .get()
-      // .then((value){
-      //     return parseData(value);
-      // });
+  }
+  
+  @override
+  void deleteConservationUser(String loggedInUserId,String friendId) {
+      deleteMessagePrepare(loggedInUserId, friendId);
+      deleteMessagePrepare(friendId,loggedInUserId);
   }
 
-    // List<String> parseData(DataSnapshot snapshot){
-    //     List<String> contacts = [];
-    //     Map<String,dynamic> maps = Map<String,dynamic>.from(snapshot.value as Map);
-      
-    //     maps.keys.forEach((element) {
-    //       contacts.add(element);
-    //     });
-    //     return contacts;
-    // }
- 
+
+      Future<void> deleteMessagePrepare(String loggedInUserId,String friendId){
+            return firebase
+                .child(contactsAndMessagesCollection)
+                .child(loggedInUserId)
+                .child(friendId)
+                .remove();
+      }
 
 }

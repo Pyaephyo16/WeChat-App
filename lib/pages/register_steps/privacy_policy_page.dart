@@ -38,7 +38,7 @@ class PrivacyPolicyPage extends StatelessWidget {
               },
             ),
             centerTitle: true,
-            title: AppBarTitleView(title: "Privacy Policy"),
+            title: AppBarTitleView(title: PRIVACY_POLICY_TEXT),
             actions: [
               IconButton(
                icon:const Icon(Icons.more_horiz,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.white,),
@@ -56,13 +56,13 @@ class PrivacyPolicyPage extends StatelessWidget {
                 child: ListView(
                   children: [
                     const SizedBox(height: MARGIN_MEDIUM_1,),
-                    Center(child: AppBarTitleView(title: "WECHAT PRIVACY POLICY")),
+                    Center(child: AppBarTitleView(title: WE_CHAT_PRIVACY_TEXT)),
                     const SizedBox(height: MARGIN_MEDIUM_1,),
                     PrivacyDateView(
-                      text: "Last Updated: 202-03-22",
+                      text: LAST_UPDATE_DATE_TEXT,
                     ),
                     const SizedBox(height: MARGIN_MEDIUM_1,),
-                    AppBarTitleView(title: "Summary"),
+                    AppBarTitleView(title: SUMMARY_TEXT),
                     const SizedBox(height: MARGIN_MEDIUM_1,),
                     PrivacyContentView(text: PRIVACY_SUMMARY),
 
@@ -88,7 +88,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                  Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(height: 22,),
+                      const SizedBox(height: MARGIN_MEDIUM_2X,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -99,19 +99,19 @@ class PrivacyPolicyPage extends StatelessWidget {
                             },
                              isAccept: bloc.isRead,
                              ),
-                             SizedBox(width: 16,),
+                            const SizedBox(width: MARGIN_MEDIUM_1,),
                              TermsOfServiceNoteText(
-                              text: "I have read and accept the above terms",
+                              text: TERMS_OF_SERVICE_TEXT,
                               ),
                         ],
                       ),
-                      SizedBox(height: 22,),
+                     const SizedBox(height: MARGIN_MEDIUM_2X,),
                       AcceptAndContinueButtonView(
                         onClick: (){
                      navigateToNextScreen(context,EmailVarificationPage(user: user,pickedFile: pickedFile));
                         },
                          isAccept: bloc.isRead,
-                         text: "Next",
+                         text: NEXT_TEXT,
                          ),
                     ],
                   ),
@@ -136,8 +136,8 @@ class PrivacyDateView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-    style: TextStyle(
-      fontSize: 16,
+    style:const TextStyle(
+      fontSize: TEXT_MEDIUM_1,
       color: CONTACT_SEARCH_TEXT_COLOR,
       fontWeight: FontWeight.w500,
     ),
@@ -156,8 +156,8 @@ class PrivacyContentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-    style: TextStyle(
-      fontSize: 16,
+    style:const TextStyle(
+      fontSize: TEXT_MEDIUM_1,
       color: CONTACT_SEARCH_TEXT_COLOR,
       fontWeight: FontWeight.w500,
     ),

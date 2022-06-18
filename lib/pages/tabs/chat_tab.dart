@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:we_chat_app/blocs/chat_tab_bloc.dart';
 import 'package:we_chat_app/data/vos/chat_history_vo.dart';
@@ -43,42 +44,38 @@ class ChatTab extends StatelessWidget {
            body: Container(
           color: Colors.white,
           padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1,vertical: MARGIN_SMALL),
-          child: Selector<ChatTabBloc,UserVO>(
-              selector: (context,bloc) => bloc.loggedInUser ?? UserVO.empty(),
-              shouldRebuild: (pervious,next) => pervious != next,
-              builder: (context,loggedInUser,child) =>
-               Selector<ChatTabBloc,List<ChatHistoryVO>>(
-              selector: (context,bloc) => bloc.chatHistory,
-              shouldRebuild: (pervious,next) => pervious != next,
-              builder: (context,chatHistory,child){
-               print("widget layer ====> ${chatHistory.length}"); 
-                  return (chatHistory == null || chatHistory.length == 0) ?
-                 const NoFriendView()
+          child: Consumer<ChatTabBloc>(
+                builder: (context,bloc,child){
+               print("widget layer ====> ${bloc.chatHistory.length}"); 
+                  return (bloc.chatHistory == null || bloc.chatHistory.length == 0) ?
+                  NoFriendView(
+                  text: "Currently no chat message",
+                 )
                   : ListView.separated(
                 separatorBuilder: (context,index) => DivideLineView(),
-                itemCount: chatHistory.length,
+                itemCount: bloc.chatHistory.length,
                 itemBuilder: (BuildContext context,int index){
                   return DismissiblePersonView(
                     index: index,
-                    users: chatHistory,
+                    users: bloc.chatHistory,
                     onClick: (){
                       navigateToNextScreen(
                         context,
                         ConservationPage(
-                          friend: chatHistory[index].friend ?? UserVO.empty(),
-                          loggedInUser: loggedInUser,
+                          friend: bloc.chatHistory[index].friend ?? UserVO.empty(),
+                          loggedInUser: bloc.loggedInUser ?? UserVO.empty(),
                           ));
                     },
                     remove: (context){
-                //    ChatTabBloc bloc = Provider.of(context,listen: false);
-                // bloc.remoteUser(index);
+                   ChatTabBloc bloc = Provider.of(context,listen: false);
+                bloc.remoteUser(bloc.chatHistory[index].friend?.id ?? "",bloc.loggedInUser ?? UserVO.empty());
                     },
                   );
                 }
                 );
               },
             ),
-          ),
+          //),
         ),
       ),
     );
@@ -184,12 +181,8 @@ class ChatPersonView extends StatelessWidget {
                   name: user.friend?.userName ?? "",
                 ),
                 SizedBox(height: MARGIN_PRE_SMALL,),
-                // PersonDescriptionView(
-                //   isChatPage: true,
-                //   description: user.messages.last.message ?? "",
-                // ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.6,
+                  width: MediaQuery.of(context).size.width * 0.5,
                   child: Text(
                     user.messages.last.message ?? "",
                     overflow: TextOverflow.ellipsis,
@@ -201,6 +194,14 @@ class ChatPersonView extends StatelessWidget {
                   ),
                 )
               ],
+            ),
+            const Spacer(),
+            Text(
+              DateFormat().add_jm().format(DateTime.fromMicrosecondsSinceEpoch(int.parse(user.messages.last.timeStamp ?? ""))),
+              style:const TextStyle(
+                color: Colors.grey,
+                fontSize: 16,
+              ),
             ),
           ],
         ),

@@ -37,53 +37,45 @@ class ChatTabBloc extends ChangeNotifier{
       auth.getLoggedInUser().then((value){
           weChatModel.getUserById(value.id ?? "").listen((event) {
               loggedInUser = event;
+               chatHistory.clear();
+             temp.clear();
+               getAllFriendData(value);
               _notifySafely();
           });
-      });
-
-       auth.getLoggedInUser().then((value){
-            msgModel.getConversationUser(value.id ?? "").listen((event){
-                if(event.length != 0){
-                   print("conversation friend id list ====> $event");
-                event.forEach((element) {
-                    weChatModel.getUserById(element!).listen((friend){
-                      msgModel.getAllMessage(value.id ?? "",element).listen((data) {
-                          temp.add(
-                              ChatHistoryVO(
-                                friendId: element,
-                                friend: friend,
-                                messages: data,
-                                ),
-                          );
-            chatHistory = temp;
-                print("check history ===> $chatHistory");
-                print("check history  length ===> ${chatHistory.length}");
-                _notifySafely();
-                    });
-                    });
-                });
-                }
-            });
       });
     
 
   }
 
+  void getAllFriendData(UserVO value) {
+    msgModel.getConversationUser(value.id ?? "").listen((event){
+           print("conversation friend id list ====> $event");
+          chatHistory.clear();
+          temp.clear();
+          _notifySafely();
+        event.forEach((element) {
+            weChatModel.getUserById(element!).listen((friend){
+              msgModel.getAllMessage(value.id ?? "",element).listen((data) {
+                  temp.add(
+                      ChatHistoryVO(
+                        friendId: element,
+                        friend: friend,
+                        messages: data,
+                        ),
+                  );
+        chatHistory = temp;
+        print("check history  length ===> ${chatHistory.length}");
+        _notifySafely();
+            });
+            });
+        });
+    });
+  }
 
-  // void remoteUser(int index){
-  //     UserDummyVO? removeItem;
-  // List<UserDummyVO> temp = usersDummy.mapIndexed((num,element){
-  //     if(index == num){
-  //       removeItem = element;
-  //     }
-  //     return element;
-  // }).toList();
-  //   temp.removeWhere((element) => element.id == removeItem?.id);
-  //   usersDummy = temp;
 
-  //   print("userDummy bloc =======> ${usersDummy.length}");
-  //   _notifySafely();
-  // }
+  void remoteUser(String friendId,UserVO user){
+    msgModel.deleteConservationUser(loggedInUser?.id ?? "", friendId);
+  } 
 
   _notifySafely(){
     if(!isDisposed){

@@ -65,7 +65,9 @@ class ContactTab extends StatelessWidget {
                     shouldRebuild: (previous,next) => previous != next,
                     builder: (context,azContactList,child){
                      return (azContactList.length == 0 || azContactList == null) ?
-                    const NoFriendView() 
+                     NoFriendView(
+                      text: "No contact",
+                     ) 
                     :  ContactSection(
                       user: azContactList,
                       onClick: (user){
@@ -88,19 +90,36 @@ class ContactTab extends StatelessWidget {
 }
 
 class NoFriendView extends StatelessWidget {
-  const NoFriendView({
-    Key? key,
-  }) : super(key: key);
+ 
+  final String text;
+
+  NoFriendView({
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("No friend",
-     style: TextStyle(
-       fontSize: MARGIN_MEDIUM_1,
-       color: Colors.black,
-       fontWeight: FontWeight.w600,
-     ),
-     ),);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 160,
+            height: 160,
+            child: Image.network("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk9Qu__k8HzBi-gOIaBJe2kQSV1SwXpKSgbg&usqp=CAU",
+            fit: BoxFit.cover,
+            ),
+          ),
+          Text(text,
+          style: TextStyle(
+           fontSize: MARGIN_MEDIUM_1,
+           color: Colors.black,
+           fontWeight: FontWeight.w600,
+          ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

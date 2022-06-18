@@ -284,13 +284,13 @@ class LoadingShowView extends StatelessWidget {
     return Center(
       child: Container(
         alignment: Alignment.center,
-        width: 100,
-        height: 100,
+        width: LOADING_VIEW_CONTAINER_WIDTH,
+        height: LOADING_VIEW_CONTAINER_HEIGHT,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
           color: DISABLED_BTN_COLOR,
         ),
-        child: SpinKitFadingCircle(
+        child:const SpinKitFadingCircle(
           color: PRIMARY_COLOR,
         ),
       ),
@@ -388,7 +388,7 @@ class PhotoOrVideoView extends StatelessWidget {
               onPressed: () {
                 deletePhoto();
               },
-              icon: Icon(
+              icon:const Icon(
                 Icons.cancel_outlined,
                 size: MARGIN_SIZE_FOR_ICON,
                 color: Colors.red,

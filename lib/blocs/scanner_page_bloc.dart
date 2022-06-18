@@ -56,12 +56,12 @@ class ScannerPageBloc extends ChangeNotifier{
       });
     }
 
-     Future<bool> addContact({required Function alreadyExist}){
+     Future<bool> addContact({required Function alreadyExist})async{
                  bool isAlreadyInAccount = false;
            if(barcode?.code != null){
             controller!.pauseCamera();
             controller?.dispose();
-              model.getUserById(barcode!.code ?? "").listen((event){
+             await model.getUserById(barcode!.code ?? "").listen((event){
                   isLoading = true;
                   friend = event;
                   print("owner ===> $loggedInUser");

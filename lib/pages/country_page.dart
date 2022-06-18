@@ -6,6 +6,7 @@ import 'package:we_chat_app/data/vos/country_dial_vo.dart';
 import 'package:we_chat_app/dummy/az_country_vo.dart';
 import 'package:we_chat_app/resources/colors.dart';
 import 'package:we_chat_app/resources/dimens.dart';
+import 'package:we_chat_app/resources/strings.dart';
 import 'package:we_chat_app/view_items/app_bar_title_view.dart';
 
 class CountryPage extends StatelessWidget {
@@ -19,7 +20,7 @@ class CountryPage extends StatelessWidget {
           color: Colors.black,
           child: Column(
             children: [
-            const SizedBox(height: 22,),
+            const SizedBox(height: MARGIN_MEDIUM_2X,),
          Selector<CountryPageBloc,bool>(
           selector: (context,bloc) => bloc.isNeedSearch,
           shouldRebuild: (previous,next) => previous != next,
@@ -43,7 +44,7 @@ class CountryPage extends StatelessWidget {
             },
           ),
         ),
-       const SizedBox(height: 12,),
+       const SizedBox(height: MARGIN_MEDIUM,),
          Selector<CountryPageBloc,List<AZCountryVO>>(
           selector: (context,bloc) => bloc.countryList ?? [],
           shouldRebuild: (previous,next) => previous != next,
@@ -144,7 +145,7 @@ class CountryView extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style:const TextStyle(
                     color: Colors.white,
-                    fontSize:18, 
+                    fontSize:TEXT_MEDIUM_1X, 
                     fontWeight: FontWeight.w500,
                   ),
                   ),
@@ -152,11 +153,11 @@ class CountryView extends StatelessWidget {
                 Text("${country.country.dial}",
                 style:const TextStyle(
                   color: CONTACT_SEARCH_TEXT_COLOR,
-                  fontSize: 16, 
+                  fontSize: TEXT_MEDIUM_1, 
                   fontWeight: FontWeight.w500,
                 ),
                 ),
-                const SizedBox(width: 20,),
+                const SizedBox(width: MARGIN_MEDIUM_2,),
               ],
             ),
           ],
@@ -177,7 +178,7 @@ class AppBarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-     padding:const EdgeInsets.only(left: MARGIN_MEDIUM_1,right: MARGIN_MEDIUM_1,top: 22),
+     padding:const EdgeInsets.only(left: MARGIN_MEDIUM_1,right: MARGIN_MEDIUM_1,top: MARGIN_MEDIUM_2X),
       color: Colors.black,
      child:Row (
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -188,7 +189,7 @@ class AppBarView extends StatelessWidget {
         },
          icon:const Icon(Icons.chevron_left,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
          ),
-      AppBarTitleView(title: "Region",),
+      AppBarTitleView(title: REGION_TEXT,),
        IconButton(
         onPressed: (){
           search();
@@ -213,7 +214,7 @@ class CountrySearchFieldView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Container(
-      padding:const EdgeInsets.only(left: MARGIN_MEDIUM_1,right: MARGIN_MEDIUM_1,top: 22),
+      padding:const EdgeInsets.only(left: MARGIN_MEDIUM_1,right: MARGIN_MEDIUM_1,top: MARGIN_MEDIUM_2X),
       child: Row(
         children:  [
           Expanded(
@@ -227,10 +228,10 @@ class CountrySearchFieldView extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               decoration:const InputDecoration(
-                contentPadding: EdgeInsets.only(left: 16,top: 12),
+                contentPadding: EdgeInsets.only(left: MARGIN_MEDIUM_1,top: MARGIN_MEDIUM),
                 focusColor: PRIMARY_COLOR,
-                prefixIcon: Icon(Icons.search,color: CONTACT_SEARCH_TEXT_COLOR,size: 22,),
-                hintText: "Search",
+                prefixIcon: Icon(Icons.search,color: CONTACT_SEARCH_TEXT_COLOR,size: MARGIN_MEDIUM_2X,),
+                hintText: SEARCH_TEXT,
                 hintStyle: TextStyle(
                  color: CONTACT_SEARCH_TEXT_COLOR,
                fontSize: TEXT_MEDIUM_1X,
@@ -243,7 +244,7 @@ class CountrySearchFieldView extends StatelessWidget {
             onPressed: (){
               back();
             },
-             child:const Text("Cancel",
+             child:const Text(CANCEL_TEXT,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: TEXT_MEDIUM_1X,

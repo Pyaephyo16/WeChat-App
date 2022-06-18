@@ -40,15 +40,15 @@ class EmailVarificationPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1),
         child: Column(
           children: [
-            const SizedBox(height: 82,),
+            const SizedBox(height: MARGIN_HEIGHT_FOR_SPACING,),
             Icon(
               Icons.info_rounded,
               color: Colors.blue,
-              size: 48,
+              size: ICON_SIZE_FOR_VARIFACATION,
             ),
-            const SizedBox(height: 32,),
+            const SizedBox(height: MARGIN_SIZE_FOR_ICON,),
             AppBarTitleView(title: SECURITY_VARIFICATION_TEXT),
-            const SizedBox(height: 32,),
+            const SizedBox(height: MARGIN_SIZE_FOR_ICON,),
             PrivacyContentView(text: SECURITY_VARIFICATION_CONTENT),
            const Spacer(),
            AcceptAndContinueButtonView(
@@ -56,9 +56,9 @@ class EmailVarificationPage extends StatelessWidget {
               navigateToNextScreen(context,EmailPage(user: user,pickedFile: pickedFile,));
             },
              isAccept: true,
-              text: "Start",
+              text: START_TEXT,
               ),
-              const SizedBox(height: 32,),  
+              const SizedBox(height: MARGIN_SIZE_FOR_ICON,),  
           ],
         ),
       ),

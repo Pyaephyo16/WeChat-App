@@ -60,5 +60,10 @@ class MessageModelImpl extends MessageModel{
     return messageDataAgent.getConversationUser(loggedInUserId);
   }
   
+  @override
+  void deleteConservationUser(String loggedInUserId, String friendId) {
+    messageDataAgent.deleteConservationUser(loggedInUserId, friendId);
+  }
+  
 
 }

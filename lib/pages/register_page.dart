@@ -29,8 +29,7 @@ class RegisterPage extends StatelessWidget {
           elevation: 0,
           backgroundColor: Colors.black,
           leading: IconButton(
-            //icon:const Icon(Icons.cancel_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-            icon: FaIcon(FontAwesomeIcons.xmark),
+            icon:const FaIcon(FontAwesomeIcons.xmark),
             onPressed: (){
               Navigator.pop(context);
             },
@@ -44,9 +43,9 @@ class RegisterPage extends StatelessWidget {
                 builder: (context,RegisterBloc bloc,child) => Column(
               children: [
                 TitleTextView(
-                  titleText: "Sign up by phone number",
+                  titleText: SIGN_UP_BY_PHONE_TEXT,
                 ),
-               const SizedBox(height: 12,),
+               const SizedBox(height: MARGIN_MEDIUM,),
                  ChooseProfileView(
                     onClick: (){
                       choosePhotoBTMSheet(
@@ -76,13 +75,13 @@ class RegisterPage extends StatelessWidget {
                     pickedFile: bloc.pickedFile,
                   ),
 
-               const SizedBox(height: 38,),
+               const SizedBox(height: MARGIN_SIZE_FOR_REGISTER_SPACEING,),
                
                TextFieldForRegisterAndLoginView(
                 formKey: bloc.nameFormKey,
                  controller: bloc.nameController,
-                  hintText: "Enter name",
-                  title: "Name",
+                  hintText: ENTER_NAME_TEXT,
+                  title: NAME_TEXT,
                   isPassword: false,
                   isPhone: false,
                   isEmail: false,
@@ -91,7 +90,7 @@ class RegisterPage extends StatelessWidget {
                   showPassword: (){},
                   ),
 
-                  const SizedBox(height: 22,),
+                  const SizedBox(height: MARGIN_MEDIUM_2X,),
 
                   RegionView(
                     controller: bloc.regionController,
@@ -111,8 +110,8 @@ class RegisterPage extends StatelessWidget {
                   TextFieldForRegisterAndLoginView(
                 formKey: bloc.phoneFormKey,
                  controller: bloc.phoneController,
-                  title: "Phone",
-                  hintText: "Enter Phone Number",
+                  title: PHONE_TEXT,
+                  hintText: ENTER_PHONE_TEXT,
                   isPassword: false,
                   isPhone: true,
                   isEmail: false,
@@ -126,8 +125,8 @@ class RegisterPage extends StatelessWidget {
                   TextFieldForRegisterAndLoginView(
                 formKey: bloc.passwordFormKey,
                  controller: bloc.passwordController,
-                  title: "Password",
-                  hintText: "Enter Password",
+                  title: PASSWORD_TEXT,
+                  hintText: ENTER_PASSWORD_TEXT,
                   isPassword: true,
                   isPhone: false,
                   isEmail: false,
@@ -139,7 +138,7 @@ class RegisterPage extends StatelessWidget {
                    },
                   ),
 
-                  const SizedBox(height: 60,),
+                  const SizedBox(height: MARGIN_FOR_CONTACT_NAME_TITLE,),
 
                   TermsOfServiceView(
                     isAccept: bloc.isAccept,
@@ -149,11 +148,11 @@ class RegisterPage extends StatelessWidget {
                     },
                   ),
 
-                  const SizedBox(height: 32,),
+                  const SizedBox(height: MARGIN_SIZE_FOR_ICON,),
 
                   AcceptAndContinueButtonView(
                     isAccept: bloc.isAccept,
-                    text: "Accept and Continue",
+                    text: ACCEPT_AND_CONTINUER_TEXT,
                     onClick: (){
                       if( (bloc.nameFormKey.currentState!.validate()) && bloc.phoneFormKey.currentState!.validate() 
                       && bloc.passwordFormKey.currentState!.validate() && bloc.regionFormKey.currentState!.validate() 
@@ -168,10 +167,9 @@ class RegisterPage extends StatelessWidget {
                           fcm: "",
                           qrCode: "",
                         );
-                        ///File ko that that htae pay pho lo
                         navigateToNextScreen(context,PrivacyPolicyPage(user: registerUser,pickedFile: bloc.pickedFile!,));
                       }else if(bloc.pickedFile == null){
-                          snackBarDataShow(context,"You need to select Profile Image");
+                          snackBarDataShow(context,PROFILE_IMAGE_WARNING_TEXT);
                       }
                     },
                   ),
@@ -193,14 +191,14 @@ class RegisterPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               SignUpMethodView(
-                text: "Gallery",
+                text: GALLERY_TEXT,
                  tapped: (){
                   chooseGallery();
                  }
                  ),
                  DivideLineView(),
                  SignUpMethodView(
-                text: "Camera",
+                text: CAMERA_TEXT,
                  tapped: (){
                   ChooseCamera();
                  }
@@ -235,9 +233,9 @@ class AcceptAndContinueButtonView extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         width: MediaQuery.of(context).size.width * 0.6,
-        height: 50,
+        height: ACCEPT_AND_CONTINUE_CONTAINER_HEIGHT,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(MARGIN_SMALL_1),
           color:(isAccept) ? PRIMARY_COLOR : DISABLED_BTN_COLOR,
         ),
         child: Text(text,
@@ -265,20 +263,20 @@ class TermsOfServiceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.symmetric(horizontal: MARGIN_SIZE_FOR_ICON),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
             CheckIconView(onTapAccept: onTapAccept, isAccept: isAccept),
-           const SizedBox(width: 8,),
+           const SizedBox(width: MARGIN_SMALL_1,),
            const TermsOfServiceTextView(),
             ],
           ),
-         const SizedBox(height: 22,),
+         const SizedBox(height: MARGIN_MEDIUM_2X,),
          TermsOfServiceNoteText(
-            text: "The information collected on this page is only used for account registration.",
+            text: TERMS_OF_SERVICE_NOTE_TEXT,
          ),
         ],
       ),
@@ -299,7 +297,7 @@ class TermsOfServiceNoteText extends StatelessWidget {
     return Text(text,
     style:const TextStyle(
       color: CONTACT_SEARCH_TEXT_COLOR,
-      fontSize: 14,
+      fontSize: TEXT_MEDIUM,
     ),
     );
   }
@@ -316,17 +314,17 @@ class TermsOfServiceTextView extends StatelessWidget {
       child: RichText(
         textAlign: TextAlign.center,
         text:const TextSpan(
-          text: "I have read and accept the ",
+          text: I_HAVE_READ_TEXT,
           style: TextStyle(
             color: CONTACT_SEARCH_TEXT_COLOR,
-            fontSize: 14,
+            fontSize: TEXT_MEDIUM,
           ),
           children: [
             TextSpan(
-              text: "<<Terms of Service>>",
+              text: TERMS_OF_SERVICE_SHOW_TEXT,
               style: TextStyle(
             color: TERMS_OF_SERVICE_COLOR,
-            fontSize: 14,
+            fontSize: TEXT_MEDIUM,
           ),
             )
           ],
@@ -353,15 +351,15 @@ class CheckIconView extends StatelessWidget {
         onTapAccept();
       },
       child: Container(
-        width: 26,
-        height: 26,
+        width: CHECK_ICON_WIDTH,
+        height: CHECK_ICON_HEIGHT,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(MARGIN_FOR_CHECK_ICON),
           color: (isAccept) ? PRIMARY_COLOR : Colors.transparent,
           border: (isAccept) ? Border.all(color: PRIMARY_COLOR) : Border.all(color: CONTACT_SEARCH_TEXT_COLOR),
         ),
-        child: Icon(Icons.check,color: (isAccept) ? Colors.white : CONTACT_SEARCH_TEXT_COLOR,size: 16,),
+        child: Icon(Icons.check,color: (isAccept) ? Colors.white : CONTACT_SEARCH_TEXT_COLOR,size: MARGIN_MEDIUM_1,),
       ),
     );
   }
@@ -386,8 +384,8 @@ class RegionView extends StatelessWidget {
            Container(
           alignment: Alignment.centerLeft,
           width: MediaQuery.of(context).size.width * 0.3,
-          child: Text("Region",
-            style: const TextStyle(
+          child:const Text(REGION_TEXT,
+            style: TextStyle(
               color: Colors.white,
               fontSize: TEXT_MEDIUM_1X,
           fontWeight: FontWeight.w400,
@@ -410,7 +408,7 @@ class RegionView extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                   decoration:const InputDecoration(
-                       hintText: "Choose Region",
+                       hintText: CHOOSE_REGION_TEXT,
                     hintStyle: TextStyle(
                      color: CONTACT_SEARCH_TEXT_COLOR,
                    fontSize: TEXT_MEDIUM_1X,
@@ -449,10 +447,10 @@ class ChooseProfileView extends StatelessWidget {
         onClick();
       },
       child: Container(
-        width: 80,
-        height: 80,
+        width: PROFILE_CONTAINER_WIDTH,
+        height: CONTACT_ICON_ROW_CONTAINER_HEIGHT,
         color: CHAT_HEAD_SUBTITLE_COLOR,
-        child: (pickedFile == null) ? Container()
+        child: (pickedFile == null) ? Icon(Icons.camera,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,)
         : Image.file(pickedFile ?? File(''),
         fit: BoxFit.cover,
         ),
@@ -474,7 +472,7 @@ class TitleTextView extends StatelessWidget {
     return Text(titleText,
     style:const TextStyle(
       color: Colors.white,
-      fontSize: 20,
+      fontSize: TEXT_LARGE,
     ),
     );
   }

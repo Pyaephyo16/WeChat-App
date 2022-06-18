@@ -19,8 +19,11 @@ class SplashPage extends StatelessWidget {
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: Image.network("https://64.media.tumblr.com/604d7e01bb5494ab526dc736ebd27f1c/tumblr_nfwkulIpvo1r630xzo1_1280.jpg",
-                fit: BoxFit.cover,
+              // child: Image.network("https://64.media.tumblr.com/604d7e01bb5494ab526dc736ebd27f1c/tumblr_nfwkulIpvo1r630xzo1_1280.jpg",
+              //   fit: BoxFit.cover,
+              // ),
+              child: Image.asset("./asset/image/we_chat_wallpaper.jpg",
+              fit: BoxFit.cover,
               ),
             ),
           ),

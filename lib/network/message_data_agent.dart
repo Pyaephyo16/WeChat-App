@@ -7,4 +7,5 @@ abstract class MessageDataAgent{
   Stream<List<MessageVO>> getAllMessage(String loggedInUserId,String friendId);
 
   Stream<List<String?>> getConversationUser(String loggedInUserId);
+  void deleteConservationUser(String loggedInUserId,String friendId);
 }

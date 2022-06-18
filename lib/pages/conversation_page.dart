@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:we_chat_app/blocs/conservation_page_bloc.dart';
@@ -20,7 +21,7 @@ import 'package:we_chat_app/utils/extension.dart';
 import 'package:path/path.dart' as p;
 
 
-const Duration ANIMATION_DURATION_FOR_ADD = const Duration(milliseconds: 600);
+const Duration ANIMATION_DURATION_FOR_ADD = Duration(milliseconds: 600);
 
  List<ConservationFunIconVO> icons = [
 ConservationFunIconVO(
@@ -85,7 +86,7 @@ class ConservationPage extends StatelessWidget {
           elevation: 1,
           backgroundColor: PRIMARY_COLOR,
           leading: IconButton(
-            icon: Icon(Icons.chevron_left,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
+            icon:const Icon(Icons.chevron_left,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
             onPressed: (){
               Navigator.pop(context);
             },
@@ -95,7 +96,7 @@ class ConservationPage extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: (){},
-               icon: Icon(Icons.more_vert,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
+               icon:const Icon(Icons.more_vert,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
                ),
           ],
         ),
@@ -207,7 +208,7 @@ class ChosenPhotoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-                visible: ( pickedFile != null || flickManager != null) ? true : false,
+                visible: ( pickedFile != null) ? true : false,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: CHOOSEN_PHOTO_CONTAINER_HEIGHT,
@@ -323,7 +324,7 @@ class FunctionIconView extends StatelessWidget {
             child: icon,
           ),
           Text(title,
-          style: TextStyle(
+          style:const TextStyle(
             color: Colors.black,
             fontSize: TEXT_MEDIUM,
           ),
@@ -357,7 +358,7 @@ class ConsevationSection extends StatelessWidget {
             return TextMsgShowView(
                 isFriend: isFriend,
                 index: index,
-                message: message[index],
+                message: message,
             );
           }
           ),
@@ -369,7 +370,7 @@ class ConsevationSection extends StatelessWidget {
 class TextMsgShowView extends StatelessWidget {
 
   final bool isFriend;
-  final MessageVO message;
+  final List<MessageVO> message;
   final int index;
 
   TextMsgShowView({
@@ -380,42 +381,90 @@ class TextMsgShowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      return Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Visibility(
+    int textLength = message[index].message?.length ?? -1;
+      return Padding(
+        padding: (isFriend) ?
+        const EdgeInsets.only(right: 54) :
+        const EdgeInsets.only(left: 54),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Visibility(
               visible: (isFriend) ? true : false,
-              child: ChatHeadView(image: message.profileImge ?? "", isChatPage: false))),
-          Expanded(
-            flex: 10,
-            child: Container(
-              //alignment: (isFriend) ? Alignment.centerLeft : Alignment.centerRight,
-              margin: (isFriend) ? 
-             const EdgeInsets.only(right: MARGIN_SIZE_FOR_CHAT,top: MARGIN_SMALL_1,bottom: MARGIN_SMALL_1) :
-              const EdgeInsets.only(left: MARGIN_SIZE_FOR_CHAT,top: MARGIN_SMALL_1,bottom: MARGIN_SMALL_1),
-              padding:const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM,vertical: MARGIN_MEDIUM_1),
-              decoration: BoxDecoration(
-                color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
-                borderRadius: BorderRadius.circular(12),
-              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: ChatHeadView(image: message[index].profileImge ?? "", isChatPage: false),
+              )),
+            const SizedBox(width: 8,),
+            Expanded(
               child: Column(
-                crossAxisAlignment: (isFriend) ? CrossAxisAlignment.start : CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
+               crossAxisAlignment: (isFriend) ? CrossAxisAlignment.start : CrossAxisAlignment.end, 
                 children: [
-                  showText(message),
-              Text("${message.message}",
-              //textAlign: (isFriend) ? TextAlign.left : TextAlign.right,
-              style:const TextStyle(
-                fontSize: TEXT_MEDIUM_1,
-                fontWeight: FontWeight.w500,
-              ),
-              ),
+                  Center(
+                    child: Text(
+                        DateFormat().add_jm().format(DateTime.fromMicrosecondsSinceEpoch(int.parse(message[index].timeStamp ?? ""))), 
+                        style:const TextStyle(
+                    color: Colors.grey,
+                    fontSize: TEXT_MEDIUM,
+                ),
+                      ),
+                  ),
+                  Visibility(
+                    visible: (message[index].fileType == "") ? false : true,
+                    child: Container(
+                      width: (message[index].fileType == "jpg" || message[index].fileType == "png" || message[index].fileType == "jpeg" || message[index].fileType == ".jpg" || message[index].fileType == "gif") ?
+                      MediaQuery.of(context).size.width * 0.6
+                      : (message[index].fileType == "mp4") ? MediaQuery.of(context).size.width * 0.6
+                     : (textLength < 6) ? MediaQuery.of(context).size.width * 0.2 : (textLength < 15) ? MediaQuery.of(context).size.width * 0.36 : MediaQuery.of(context).size.width * 0.6,
+                      padding:const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM,vertical: MARGIN_MEDIUM_1),
+                      decoration: BoxDecoration(
+                        color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: (isFriend) ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          showText(message[index]),
+                      Visibility(
+                        visible: (message[index].message == "") ? false : true,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8,bottom: 6),
+                          child: Text(
+                            "${message[index].message}",
+                          style:const TextStyle(
+                            fontSize: TEXT_MEDIUM_1,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          ),
+                        ),
+                      ),
+                        ],
+                      )
+                    ),
+                  ),
+                  Visibility(
+                    visible: (message[index].fileType == "") ? true : false,
+                    child: Container(
+                       padding:const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM,vertical: MARGIN_MEDIUM_1),
+                      decoration: BoxDecoration(
+                         color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text("${message[index].message}",
+                      style:const TextStyle(
+                        fontSize: TEXT_MEDIUM_1,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      ),
+                    ),
+                  )
                 ],
-              )
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
   }
 
@@ -493,20 +542,12 @@ class TextFieldView extends StatelessWidget {
                  },
               ),
           ),
-        //(userText ==  ""  && chooseFile == null) ? 
         IconButton(
            onPressed: (){
               add();
            },
             icon:const Icon(Icons.add,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
-            ) 
-          //   :
-          //    IconButton(
-          //  onPressed: (){
-          //     send();
-          //  },
-          //   icon:const Icon(Icons.send,size: MARGIN_SIZE_FOR_ICON,color: TEXTFIELD_ICON_COLOR,),
-          //   ),  
+            )
      ],
                   ),
                 ),

@@ -9,6 +9,7 @@ import 'package:we_chat_app/pages/add_new_post_page.dart';
 import 'package:we_chat_app/pages/home_page.dart';
 import 'package:we_chat_app/pages/register_page.dart';
 import 'package:we_chat_app/resources/dimens.dart';
+import 'package:we_chat_app/resources/strings.dart';
 import 'package:we_chat_app/view_items/app_bar_title_view.dart';
 import 'package:we_chat_app/view_items/text_field_for_login_and_register.dart';
 import 'package:we_chat_app/utils/extension.dart';
@@ -53,14 +54,14 @@ class EmailPage extends StatelessWidget {
                    Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                     const SizedBox(height: 220,),
-                     AppBarTitleView(title: "Enter Your Email Address"),
-                     const SizedBox(height: 32,),
+                     const SizedBox(height: MARGIN_SIZE_FOR_SPACING,),
+                     AppBarTitleView(title: EMAIL_PAGE_TITLE_TEXT),
+                     const SizedBox(height: MARGIN_SIZE_FOR_ICON,),
                         TextFieldForRegisterAndLoginView(
                           formKey: bloc.emailFormKey,
                           controller: bloc.emailController,
-                          hintText: "Enter your email",
-                          title: "Email",
+                          hintText: EMAIL_PAGE_HINT_TEXT,
+                          title: EMAIL_TEXT,
                           isPassword: false,
                           isPhone: false,
                           isEmail: true,
@@ -95,7 +96,7 @@ class EmailPage extends StatelessWidget {
                               }
                             },
                              isAccept: true,
-                              text: "Done"
+                              text: DONE_TEXT,
                               ),
                          ),
                        ),
