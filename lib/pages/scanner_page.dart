@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -56,10 +57,10 @@ class _ScannerPageState extends State<ScannerPage> {
         appBar: AppBar(
           elevation: 1,
           backgroundColor: PRIMARY_COLOR,
-          title: AppBarTitleView(title: QR_SCANNER_TEXT),
+          title: AppBarTitleView(title: "qr_scanner".tr()),
           centerTitle: true,
           leading: IconButton(
-                    icon:const FaIcon(FontAwesomeIcons.xmark,color: Colors.white,),
+                    icon: FaIcon(FontAwesomeIcons.xmark,color: Theme.of(context).bottomAppBarColor),
                     onPressed: (){
                       Navigator.pop(context);
                     },
@@ -95,7 +96,7 @@ class _ScannerPageState extends State<ScannerPage> {
 
                Positioned(
                  bottom: MARGIN_SIZE_FOR_REGISTER_SPACEING,
-                 child: Text( (bloc.barcode != null) ?  " ${bloc.barcode!.code}" : SCAN_A_CODE_TEXT,
+                 child: Text( (bloc.barcode != null) ?  " ${bloc.barcode!.code}" : "scan_a_code".tr(),
                  style:const TextStyle(
                    color: Colors.white,
                    fontSize: TEXT_MEDIUM_1X,

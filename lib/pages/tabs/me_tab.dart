@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:we_chat_app/blocs/me_tab_bloc.dart';
 import 'package:we_chat_app/data/vos/conservation_fun_icon_vo.dart';
 import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/pages/qr_code_page.dart';
+import 'package:we_chat_app/pages/setting_page.dart';
 import 'package:we_chat_app/pages/splash_page.dart';
 import 'package:we_chat_app/resources/colors.dart';
 import 'package:we_chat_app/resources/dimens.dart';
@@ -12,39 +14,7 @@ import 'package:we_chat_app/resources/strings.dart';
 import 'package:we_chat_app/utils/extension.dart';
 
 
-List<ConservationFunIconVO> iconFun = [
 
-  ConservationFunIconVO(
-    icon: Icon(Icons.photo_camera_back,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
-    title: ME_PHOTO_ICON_TEXT,
-  ),
-
-  ConservationFunIconVO(
-    icon: Icon(Icons.favorite_border_outlined,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
-    title: ME_FAVOURITE_ICON_TEXT,
-  ),
-
-  ConservationFunIconVO(
-    icon: Icon(Icons.wallet_travel,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
-    title: ME_WALLET_ICON_TEXT,
-  ),
-
-  ConservationFunIconVO(
-    icon: Icon(Icons.payment_rounded,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
-    title: ME_CARDS_ICON_TEXT,
-  ),
-
-  ConservationFunIconVO(
-    icon: Icon(Icons.face_sharp,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
-    title: ME_STICKERS_ICON_TEXT,
-  ),
-
-  ConservationFunIconVO(
-    icon: Icon(Icons.settings,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
-    title: ME_SETTING_ICON_TEXT,
-  ),
-
-];
 
 
 
@@ -79,7 +49,6 @@ class MeTab extends StatelessWidget {
                     ),
                     Expanded(
                       child: Container(
-                        color: TEXT_BACKGROUND_COLOR,
                       ),
                     ),
                   ],
@@ -88,8 +57,6 @@ class MeTab extends StatelessWidget {
             
                 Positioned(
                   top: MediaQuery.of(context).size.height * 0.21,
-                  //left: MediaQuery.of(context).size.width * 0.34,
-                  //right: MediaQuery.of(context).size.width * 0.34,
                   child:  Container(
                  width: ME_TAB_PROFILE_CONTAINER_WIDTH,
                  height: ME_TAB_PROFILE_CONTAINER_HEIGHT,
@@ -110,12 +77,7 @@ class MeTab extends StatelessWidget {
             
                Positioned(
                  top: MediaQuery.of(context).size.height * 0.4,
-                 //left: MediaQuery.of(context).size.width * 0.1,
-                 //right: MediaQuery.of(context).size.width * 0.1,
                  child: BioTextView(
-                   edit: (){
-                     return print("Edit tap");
-                   },
                    text: BIO_TEXT,
                  ),
                  ),
@@ -128,14 +90,12 @@ class MeTab extends StatelessWidget {
                       walletTap: (){return print("wallet me tap");},
                       cardsTap: (){return print("cards me tap");},
                       stickersTap: (){return print("stickers me tap");},
-                      settingTap: (){return print("setting me tap");},
+                      settingTap: (){ navigateToNextScreen(context,SettingPage());},
                    ),
                    ),
             
                    Positioned(
                      top: MediaQuery.of(context).size.height * 0.86,
-                     //left: MediaQuery.of(context).size.width * 0.2,
-                     //right: MediaQuery.of(context).size.width * 0.2,
                      child: Builder(
                       builder: (context) =>
                        LogoutButtonView(
@@ -171,17 +131,19 @@ class LogoutButtonView extends StatelessWidget {
         logout();
       },
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.45,
+        padding:const EdgeInsets.symmetric(horizontal: 6,),
+        width: MediaQuery.of(context).size.width * 0.5,
         height: LOGOUT_BTN_CONTAINER_HEIGHT,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).primaryColorLight,
           borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2),
-          border: Border.all(color: CHAT_HEAD_SUBTITLE_COLOR),
+          border: Border.all(color: UNSELECTED_ICON_COLOR),
         ),
-        child: Text(LOGOUT_TEXT,
+        child: Text(
+          "logout".tr(),
         style: TextStyle(
-          color: Colors.black,
+          color: Theme.of(context).primaryColor,
           fontSize: TEXT_LARGE,
           fontWeight: FontWeight.bold,
         ),
@@ -209,6 +171,40 @@ class MeTabIconFunSection extends StatelessWidget {
     required this.settingTap,
   });
 
+List<ConservationFunIconVO> iconFun = [
+
+  ConservationFunIconVO(
+    icon:const Icon(Icons.photo_camera_back,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+    title: "photos".tr(),
+  ),
+
+  ConservationFunIconVO(
+    icon:const Icon(Icons.favorite_border_outlined,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+    title: "favourites".tr(),
+  ),
+
+  ConservationFunIconVO(
+    icon:const Icon(Icons.wallet_travel,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+    title: "wallet".tr(),
+  ),
+
+  ConservationFunIconVO(
+    icon:const Icon(Icons.payment_rounded,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+    title: "cards".tr(),
+  ),
+
+  ConservationFunIconVO(
+    icon:const Icon(Icons.face_sharp,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+    title: "stickers".tr(),
+  ),
+
+  ConservationFunIconVO(
+    icon:const Icon(Icons.settings,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+    title: "setting".tr(),
+  ),
+
+];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -223,7 +219,7 @@ class MeTabIconFunSection extends StatelessWidget {
            return Container(
              alignment: Alignment.center,
              decoration: BoxDecoration(
-               color: Colors.white,
+               color: Theme.of(context).primaryColorLight,
                border: Border.all(color: CHAT_HEAD_SUBTITLE_COLOR),
              ),
              child: MeIconFunView(
@@ -298,11 +294,9 @@ class MeIconFunView extends StatelessWidget {
 class BioTextView extends StatelessWidget {
  
   final String text;
-  final Function edit;
 
   BioTextView({
     required this.text,
-    required this.edit,
   });
 
   @override
@@ -313,8 +307,6 @@ class BioTextView extends StatelessWidget {
       height: 70,
       child: RichText(
         textAlign: TextAlign.center,
-        //overflow: TextOverflow.ellipsis,
-        //maxLines: 3,
         text: TextSpan(
           text: text,
           style:const TextStyle(
@@ -322,21 +314,6 @@ class BioTextView extends StatelessWidget {
             fontSize: TEXT_MEDIUM_1,
             fontWeight: FontWeight.w500,
           ),
-          children: <TextSpan>[
-            TextSpan(
-              text: EDIT_TEXT,
-              // recognizer: TapGestureRecognizer()..onTap = (){
-              //  print("work here");
-              //  edit();
-              //    },
-               recognizer: TapGestureRecognizer()..onTap = ()=> debugPrint("work here"),
-              style:const TextStyle(
-                color: PRIMARY_COLOR,
-                fontSize: MARGIN_MEDIUM_1,
-                fontWeight: FontWeight.w700,
-              )
-            )
-          ],
         ),
         ),
     );
@@ -373,7 +350,7 @@ class ProfileAppBarView extends StatelessWidget {
               onPressed: (){
                 qrTouch();
               },
-               icon:const Icon(Icons.qr_code,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.white,),
+               icon: Icon(Icons.qr_code,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Theme.of(context).bottomAppBarColor),
                ),
           ),
         )
@@ -399,16 +376,16 @@ class ProfileNameView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(title,
-        style:const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).bottomAppBarColor,
           fontSize: TEXT_LARGE_1,
           fontWeight: FontWeight.w600,
         ),
         ),
         Text(subtitle,
         textAlign: TextAlign.center,
-        style:const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).bottomAppBarColor,
           fontSize: TEXT_MEDIUM,
           fontWeight: FontWeight.w400,
         ),

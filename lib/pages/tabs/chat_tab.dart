@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -33,23 +34,22 @@ class ChatTab extends StatelessWidget {
             actions: [
               IconButton(
                 onPressed: (){},
-                 icon:const Icon(Icons.search,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.white),
+                 icon: Icon(Icons.search,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Theme.of(context).bottomAppBarColor),
                  ),
                  IconButton(
                 onPressed: (){},
-                 icon:const Icon(Icons.add_circle_outline,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.white),
+                 icon: Icon(Icons.add_circle_outline,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Theme.of(context).bottomAppBarColor),
                  ),
             ],
           ),
            body: Container(
-          color: Colors.white,
           padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1,vertical: MARGIN_SMALL),
           child: Consumer<ChatTabBloc>(
                 builder: (context,bloc,child){
                print("widget layer ====> ${bloc.chatHistory.length}"); 
                   return (bloc.chatHistory == null || bloc.chatHistory.length == 0) ?
                   NoFriendView(
-                  text: "Currently no chat message",
+                  text: "current_no_chat_message".tr(),
                  )
                   : ListView.separated(
                 separatorBuilder: (context,index) => DivideLineView(),

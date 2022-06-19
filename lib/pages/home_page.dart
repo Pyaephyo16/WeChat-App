@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -48,25 +49,25 @@ class HomePage extends StatelessWidget {
               HomePageBloc bloc = Provider.of(context,listen: false);
               bloc.userSelectTab(index);
             },
-            items:const [
+            items: [
               BottomNavigationBarItem(
-                icon: FaIcon(FontAwesomeIcons.commentDots),
-                label: CHAT_TAB,
+                icon:const FaIcon(FontAwesomeIcons.commentDots),
+                label: "chat".tr(),
                 ),
 
               BottomNavigationBarItem(
-                icon: FaIcon(FontAwesomeIcons.addressBook),
-                label: CONTACT_TAB,
+                icon:const FaIcon(FontAwesomeIcons.addressBook),
+                label: "contact".tr(),
                 ),
 
               BottomNavigationBarItem(
-                icon: FaIcon(FontAwesomeIcons.eye),
-                label: DISCOVER_TAB,
+                icon:const FaIcon(FontAwesomeIcons.eye),
+                label: "discover".tr(),
                 ),
 
               BottomNavigationBarItem(
-                icon: FaIcon(FontAwesomeIcons.user),
-                label: ME_TAB,
+                icon:const FaIcon(FontAwesomeIcons.user),
+                label: "me".tr(),
                 ),
             ],
             ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
@@ -23,47 +24,7 @@ import 'package:path/path.dart' as p;
 
 const Duration ANIMATION_DURATION_FOR_ADD = Duration(milliseconds: 600);
 
- List<ConservationFunIconVO> icons = [
-ConservationFunIconVO(
-  icon:const Icon(Icons.folder,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-  title: FILE_ICON_TEXT,
-),
 
-ConservationFunIconVO(
-  icon:const Icon(Icons.camera_alt_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-  title: CAMERA_ICON_TEXT,
-),
-
-ConservationFunIconVO(
-  icon:const Icon(Icons.video_call_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-  title: VIDEO_CALL_ICON_TEXT,
-),
-
-ConservationFunIconVO(
-  icon:const Icon(Icons.phone,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-  title: VOICE_CALL_ICON_TEXT,
-),
-
-ConservationFunIconVO(
-  icon:const Icon(Icons.location_on_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-  title: LOCATION_ICON_TEXT,
-),
-
-ConservationFunIconVO(
-  icon:const Icon(Icons.file_present_sharp,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-  title: RED_PACKET_ICON_TEXT,
-),
-
-ConservationFunIconVO(
-  icon:const Icon(Icons.compare_arrows,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-  title: TRANSFER_ICON_TEXT,
-),
-
-ConservationFunIconVO(
-  icon:const Icon(Icons.mic_none_rounded,size: MARGIN_SIZE_FOR_APP_BAR_ICON,),
-  title: VOICE_INPUT_ICON_TEXT,
-),
-];
 
 
 
@@ -86,7 +47,7 @@ class ConservationPage extends StatelessWidget {
           elevation: 1,
           backgroundColor: PRIMARY_COLOR,
           leading: IconButton(
-            icon:const Icon(Icons.chevron_left,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
+            icon: Icon(Icons.chevron_left,size: MARGIN_SIZE_FOR_ICON,color: Theme.of(context).bottomAppBarColor,),
             onPressed: (){
               Navigator.pop(context);
             },
@@ -96,7 +57,7 @@ class ConservationPage extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: (){},
-               icon:const Icon(Icons.more_vert,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
+               icon: Icon(Icons.more_vert,size: MARGIN_SIZE_FOR_ICON,color: Theme.of(context).bottomAppBarColor),
                ),
           ],
         ),
@@ -261,18 +222,60 @@ class AddMoreIconView extends StatelessWidget {
     required this.isAddTap,
     required this.tapped,
   });
+  
+   List<ConservationFunIconVO> icons = [
+ConservationFunIconVO(
+  icon:const Icon(Icons.folder,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.black,),
+  title: "file".tr(),
+),
+
+ConservationFunIconVO(
+  icon:const Icon(Icons.camera_alt_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.black),
+  title: "camera".tr(),
+),
+
+ConservationFunIconVO(
+  icon:const Icon(Icons.video_call_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.black),
+  title: "video_call".tr(),
+),
+
+ConservationFunIconVO(
+  icon:const Icon(Icons.phone,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.black),
+  title: "voice_call".tr(),
+),
+
+ConservationFunIconVO(
+  icon:const Icon(Icons.location_on_outlined,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.black),
+  title: "location".tr(),
+),
+
+ConservationFunIconVO(
+  icon:const Icon(Icons.file_present_sharp,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.black),
+  title: "red_packet".tr(),
+),
+
+ConservationFunIconVO(
+  icon:const Icon(Icons.compare_arrows,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.black),
+  title: "transfer".tr(),
+),
+
+ConservationFunIconVO(
+  icon:const Icon(Icons.mic_none_rounded,size: MARGIN_SIZE_FOR_APP_BAR_ICON,color: Colors.black),
+  title: "voice_input".tr(),
+),
+];
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: ANIMATION_DURATION_FOR_ADD,
       width: MediaQuery.of(context).size.width,
-      height: (isAddTap) ? MediaQuery.of(context).size.height * 0.3 : 0.0,
-      color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
+      height: (isAddTap) ? MediaQuery.of(context).size.height * 0.4 : 0.0,
+      color: Theme.of(context).primaryColorLight,
       child: GridView.builder(
         gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
-          childAspectRatio: 0.8,
+          childAspectRatio: 0.6,
         ),
         shrinkWrap: true,
         physics:const NeverScrollableScrollPhysics(),
@@ -324,8 +327,10 @@ class FunctionIconView extends StatelessWidget {
             child: icon,
           ),
           Text(title,
-          style:const TextStyle(
-            color: Colors.black,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Theme.of(context).primaryColor,
             fontSize: TEXT_MEDIUM,
           ),
           )
@@ -436,6 +441,7 @@ class TextMsgShowView extends StatelessWidget {
                           style:const TextStyle(
                             fontSize: TEXT_MEDIUM_1,
                             fontWeight: FontWeight.w500,
+                            color: Colors.black,
                           ),
                           ),
                         ),
@@ -456,6 +462,7 @@ class TextMsgShowView extends StatelessWidget {
                       style:const TextStyle(
                         fontSize: TEXT_MEDIUM_1,
                         fontWeight: FontWeight.w500,
+                        color: Colors.black,
                       ),
                       ),
                     ),
@@ -506,7 +513,8 @@ class TextFieldView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
+      //color: CONSERVATION_TEXTFIELD_CONTAINER_COLOR,
+      color: Theme.of(context).primaryColorLight,
                 width: MediaQuery.of(context).size.width,
                 height: FUNCTIION_ICON_CONTAINER_HEIGHT,
                 child: Padding(
@@ -523,6 +531,11 @@ class TextFieldView extends StatelessWidget {
                  decoration: InputDecoration(
                    contentPadding:const EdgeInsets.symmetric(horizontal: MARGIN_SMALL_1),
                    hintText: HINT_TEXT,
+                   hintStyle: TextStyle(
+                   fontSize: TEXT_MEDIUM_1X,
+                   fontWeight: FontWeight.w500,
+                   color: Theme.of(context).primaryColorLight,
+                 ),
                    border: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(12),
                      borderSide:const BorderSide(color: TEXTFIELD_BORDER_COLOR,width: 0.4),
@@ -533,6 +546,7 @@ class TextFieldView extends StatelessWidget {
                  style:const TextStyle(
                    fontSize: TEXT_MEDIUM_1X,
                    fontWeight: FontWeight.w500,
+                   color: Colors.black,
                  ),
                  onSubmitted: (str){
                   submitted(str);

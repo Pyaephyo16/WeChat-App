@@ -43,8 +43,6 @@ class ChatTabBloc extends ChangeNotifier{
               _notifySafely();
           });
       });
-    
-
   }
 
   void getAllFriendData(UserVO value) {

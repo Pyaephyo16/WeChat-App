@@ -28,14 +28,14 @@ class ContactTab extends StatelessWidget {
           elevation: 1,
           backgroundColor: PRIMARY_COLOR,
           centerTitle: true,
-          title: AppBarTitleView(title: CONTACTS_TEXT),
+          title: AppBarTitleView(title: "contact".tr()),
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1),
               child: IconButton(
                 onPressed: (){
                 }, 
-                icon: Icon(Icons.person_add_alt,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
+                icon: Icon(Icons.person_add_alt,size: MARGIN_SIZE_FOR_ICON,color: Theme.of(context).bottomAppBarColor,),
                 ),
             ),
           ],
@@ -66,7 +66,7 @@ class ContactTab extends StatelessWidget {
                     builder: (context,azContactList,child){
                      return (azContactList.length == 0 || azContactList == null) ?
                      NoFriendView(
-                      text: "No contact",
+                      text: "no_contact".tr(),
                      ) 
                     :  ContactSection(
                       user: azContactList,
@@ -100,24 +100,28 @@ class NoFriendView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 160,
-            height: 160,
-            child: Image.network("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk9Qu__k8HzBi-gOIaBJe2kQSV1SwXpKSgbg&usqp=CAU",
-            fit: BoxFit.cover,
+      child: Container(
+        
+              width: 460,
+              height: 400,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned.fill(
+              child: Image.asset("./asset/image/no_chat_message.png",
+              fit: BoxFit.cover,
+              ),
             ),
-          ),
-          Text(text,
-          style: TextStyle(
+
+           Text(text,
+          style:const TextStyle(
            fontSize: MARGIN_MEDIUM_1,
            color: Colors.black,
            fontWeight: FontWeight.w600,
           ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -170,40 +174,6 @@ class ContactSection extends StatelessWidget {
              },
              );
         });
-    // return ListView.builder(
-    //   itemCount: user.length,
-    //   itemBuilder: (BuildContext context,int index){
-    //     return Padding(
-    //       padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 18),
-    //       child: Row(
-    //         children: [
-    //           ChatHeadView(
-    //             image: user[index].image ?? "",
-    //              isChatPage: true,
-    //             ),
-    //             SizedBox(width: 12,),
-    //             Expanded(
-    //               child: Column(
-    //                 crossAxisAlignment: CrossAxisAlignment.start,
-    //                 mainAxisSize: MainAxisSize.min,
-    //                 children: [
-    //                   Text(user[index].name ?? "",
-    //                    style: TextStyle(
-    //                       color: Colors.black,
-    //                       fontWeight: FontWeight.w500,
-    //                       fontSize: TEXT_LARGE,
-    //                     ),
-    //                   ),
-    //                   SizedBox(height: 16,),
-    //                   DivideLineView(),
-    //                 ],
-    //               ),
-    //             )
-    //         ],
-    //       ),
-    //     );
-    //   }
-    //   );
   }
 }
 
@@ -241,7 +211,8 @@ class ContactPeopleShowView extends StatelessWidget {
               alignment: Alignment.centerLeft,
                width: MediaQuery.of(context).size.width,
                height: CONTACT_NAME_LIST_TITLE_CONTAINGER_HEIGHT,
-               color: CONTACT_PAGE_BG_COLOR,
+               margin:const EdgeInsets.symmetric(vertical: 4),
+               color: Theme.of(context).primaryColorDark,
                child: Padding(
                  padding: const EdgeInsets.only(left: MARGIN_FOR_CONTACT_NAME_TITLE),
                  child: Text("${tag}",
@@ -268,7 +239,7 @@ class ContactPeopleShowView extends StatelessWidget {
                    children: [
                      Text(user[index].person.userName ?? "",
                       style: TextStyle(
-                         color: Colors.black,
+                         color: Theme.of(context).primaryColor,
                          fontWeight: FontWeight.w500,
                          fontSize: TEXT_LARGE,
                        ),
@@ -303,26 +274,33 @@ class ContactRowView extends StatelessWidget {
         border: Border.symmetric(horizontal: BorderSide(color: CONTACT_ROW_ICON_COLOR)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          ContactMenuIconView(
-            icon:const Icon(Icons.person_add_alt,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
-            title: NEW_FRIEND_TEXT,
+          Expanded(
+            child: ContactMenuIconView(
+              icon:const Icon(Icons.person_add_alt,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
+              title: "new_friend".tr(),
+            ),
           ),
           VerticalLineView(),
-          ContactMenuIconView(
-            icon:const Icon(Icons.people_alt_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
-            title: GROUP_CHATS,
+          Expanded(
+            child: ContactMenuIconView(
+              icon:const Icon(Icons.people_alt_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
+              title: "group_chat".tr(),
+            ),
           ),
           VerticalLineView(),
-          ContactMenuIconView(
-            icon:const Icon(Icons.bookmarks_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
-            title: TAG_TEXT,
+          Expanded(
+            child: ContactMenuIconView(
+              icon:const Icon(Icons.bookmarks_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
+              title: "tags".tr(),
+            ),
           ),
           VerticalLineView(),
-          ContactMenuIconView(
-            icon:const Icon(Icons.book_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
-            title: OFFICAL_ACCOUNTS,
+          Expanded(
+            child: ContactMenuIconView(
+              icon:const Icon(Icons.book_outlined,size: MARGIN_SIZE_FOR_ICON,color: CHAT_HEAD_SUBTITLE_COLOR,),
+              title: "offical_accounts".tr(),
+            ),
           ),
         ],
       ),
@@ -353,13 +331,17 @@ class ContactMenuIconView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         icon,
-        Text(title,
-        textAlign: TextAlign.center,
-        style:const TextStyle(
-          color: CHAT_HEAD_SUBTITLE_COLOR,
-          fontSize: TEXT_MEDIUM_1,
-          fontWeight: FontWeight.w500,
-        ),
+        Expanded(
+          child: Text(title,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style:const TextStyle(
+            color: CHAT_HEAD_SUBTITLE_COLOR,
+            fontSize: TEXT_MEDIUM_1,
+            fontWeight: FontWeight.w500,
+          ),
+          ),
         )
       ],
     );

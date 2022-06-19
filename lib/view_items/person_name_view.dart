@@ -13,8 +13,9 @@ class PersonNameView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
        name,
-      style:const TextStyle(
-        color: Colors.black,
+      style: TextStyle(
+       //color: Colors.black,
+       color: Theme.of(context).primaryColor,
         fontWeight: FontWeight.w500,
         fontSize: TEXT_LARGE,
       ),

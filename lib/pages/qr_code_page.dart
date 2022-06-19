@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -25,10 +26,10 @@ class QrCodePage extends StatelessWidget {
       appBar: AppBar(
         elevation: 1,
         backgroundColor: PRIMARY_COLOR,
-        title: AppBarTitleView(title: QR_CODE_TEXT),
+        title: AppBarTitleView(title: "qr_code".tr()),
         centerTitle: true,
         leading: IconButton(
-                  icon:const FaIcon(FontAwesomeIcons.xmark,color: Colors.white,),
+                  icon: FaIcon(FontAwesomeIcons.xmark,color: Theme.of(context).bottomAppBarColor,),
                   onPressed: (){
                     Navigator.pop(context);
                   },
@@ -66,6 +67,7 @@ class QrCodePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: PRIMARY_COLOR,
         onPressed: (){
           navigateToNextScreen(context,ScannerPage());
         },

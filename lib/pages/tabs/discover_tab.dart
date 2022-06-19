@@ -33,19 +33,13 @@ class DiscoverTab extends StatelessWidget {
           elevation: 1,
           backgroundColor: PRIMARY_COLOR,
           centerTitle: true,
-          // leading: IconButton(
-          //   onPressed: (){
-          //     Navigator.pop(context);
-          //   },
-          //    icon: Icon(Icons.chevron_left,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
-          //    ),
-             title:  AppBarTitleView(title: MOMENT_TEXT),
+             title:  AppBarTitleView(title: "moments".tr()),
              actions: [
                IconButton(
                  onPressed: (){
                    navigateToNextScreen(context,AddNewPostPage(idForEdit: null,));
                  },
-                  icon: Icon(Icons.camera_alt_outlined,size: MARGIN_SIZE_FOR_ICON,color: Colors.white,),
+                  icon: Icon(Icons.camera_alt_outlined,size: MARGIN_SIZE_FOR_ICON,color: Theme.of(context).bottomAppBarColor,),
                   ),
              ],
         ),
@@ -172,7 +166,7 @@ class AllPostSection extends StatelessWidget {
               child: Column(
                 children: [
                   PostTimeView(
-                    isDetail: true,
+                    isDetail: false,
                     time: "$date",
                     ),
                   Expanded(
@@ -233,7 +227,7 @@ class ShowCommentSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding:const EdgeInsets.symmetric(horizontal: DISCOVER_POST_COMMENT_SECTION_PADDING,vertical: MARGIN_MEDIUM),
-      color: CONTACT_PAGE_BG_COLOR,
+      color: Theme.of(context).primaryColorDark,
       child: ListView(
         children: [
           ReactCommentView(userList: userList),
@@ -261,7 +255,7 @@ class TextComment extends StatelessWidget {
       children: [
         Container(
           width: COMMENT_SECTION_ICON_WIDTH,
-          child:const Icon(Icons.mode_comment_rounded,color: COMMENT_TEXT_COLOR,size: MARGIN_MEDIUM_2,),
+          child: Icon(Icons.mode_comment_rounded,color: Theme.of(context).primaryColor,size: MARGIN_MEDIUM_2,),
         ),
        const SizedBox(width: MARGIN_SMALL_1X,),
         Expanded(
@@ -271,9 +265,9 @@ class TextComment extends StatelessWidget {
                 maxLines: 3,
                 text: TextSpan(
                   text: "${user.userName}, ",
-              style:const TextStyle(
+              style: TextStyle(
                 fontSize: TEXT_MEDIUM,
-                color: COMMENT_TEXT_COLOR,
+                color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.w500,
               ), 
              children: [
@@ -309,16 +303,16 @@ class ReactCommentView extends StatelessWidget {
       children: [
         Container(
           width: COMMENT_SECTION_ICON_WIDTH,
-          child:const Icon(Icons.favorite,color: COMMENT_TEXT_COLOR,size: MARGIN_MEDIUM_2,),
+          child: Icon(Icons.favorite,color: Theme.of(context).primaryColor,size: MARGIN_MEDIUM_2,),
         ),
        const SizedBox(width: MARGIN_SMALL_1X,),
         Expanded(
           child: Wrap(
             children: userList.map((user){
               return Text("${user.userName}, ",
-              style:const TextStyle(
+              style: TextStyle(
                 fontSize: TEXT_MEDIUM,
-                color: COMMENT_TEXT_COLOR,
+                color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.w500,
               ),
               );
@@ -352,7 +346,7 @@ class PostImageAndDescriptionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding:const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_1,vertical: MARGIN_SMALL_1),
-      color: (isDetail) ? Colors.transparent : Colors.white,
+      color: (isDetail) ? Colors.transparent : Theme.of(context).primaryColorLight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -505,19 +499,18 @@ class PostTimeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.only(right: MARGIN_MEDIUM_1),
       alignment: Alignment.centerRight,
-      width: MediaQuery.of(context).size.width,
       height: 24,
-      color: (isDetail) ? Colors.transparent : CONTACT_PAGE_BG_COLOR,
-      child: Padding(
-        padding: const EdgeInsets.only(right: MARGIN_MEDIUM_1),
-        child: Text(time,
+     decoration: BoxDecoration(
+       color: (isDetail) ? Colors.transparent : Theme.of(context).primaryColorDark,
+     ),
+      child: Text(time,
         style: TextStyle(
           color: UNSELECTED_ICON_COLOR,
           fontSize: 14,
         ),
         ),
-      ),
     );
   }
 }
@@ -578,7 +571,7 @@ class CoverPhotoSection extends StatelessWidget {
         fit: BoxFit.cover,
        ),
         ),
-        Expanded(child: Container(color: CONTACT_PAGE_BG_COLOR,)),
+        Expanded(child: Container(color: Theme.of(context).primaryColorDark,)),
       ],
     );
   }
@@ -647,7 +640,7 @@ class MomentShowDateView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(date,
      style: TextStyle(
-      color: Colors.black,
+      color: Theme.of(context).primaryColor,
       fontWeight: FontWeight.w400,
       fontSize: TEXT_MEDIUM,
     ),

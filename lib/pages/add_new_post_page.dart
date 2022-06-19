@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
@@ -44,13 +45,13 @@ class AddNewPostPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.chevron_left,
                     size: MARGIN_SIZE_FOR_ICON,
-                    color: Colors.white,
+                    color: Theme.of(context).bottomAppBarColor,
                   ),
                 ),
-                title: AppBarTitleView(title: CREATE_POST_TEXT),
+                title: AppBarTitleView(title: "create_post".tr()),
                 actions: [
                   Builder(
                     builder: (context) => TextButton(
@@ -61,12 +62,12 @@ class AddNewPostPage extends StatelessWidget {
                               .tapPostButton()
                               .then((value) => Navigator.pop(context));
                         },
-                        child: const Text(
-                          POST_TEXT,
+                        child: Text(
+                          "post".tr(),
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: TEXT_LARGE,
-                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).bottomAppBarColor,
+                            fontSize: TEXT_MEDIUM_1,
+                            fontWeight: FontWeight.w400,
                           ),
                         )),
                   ),
@@ -191,7 +192,7 @@ class AddNewPostPage extends StatelessWidget {
                   color: PHOTO_VIDEO_COLOR,
                   size: MARGIN_MEDIUM_2X,
                 ),
-                title: PHOTO_VIDEO_TEXT,
+                title: "photo_video".tr(),
                 tapped: () {
                   photoVideo();
                 },
@@ -203,7 +204,7 @@ class AddNewPostPage extends StatelessWidget {
                   color: TAG_PEOPLE_COLOR,
                   size: MARGIN_MEDIUM_2X,
                 ),
-                title: TAG_PEOPLE_TEXT,
+                title: "tag_people".tr(),
                 tapped: () {
                   print("tag people tap");
                 },
@@ -215,7 +216,7 @@ class AddNewPostPage extends StatelessWidget {
                   color: FEELING_ACTIVITY_COLOR,
                   size: MARGIN_MEDIUM_2X,
                 ),
-                title: FEELING_ACTIVITY_TEXT,
+                title: "feeling_activity".tr(),
                 tapped: () {
                   print("feeling tap");
                 },
@@ -227,7 +228,7 @@ class AddNewPostPage extends StatelessWidget {
                   color: CHECK_IN_COLOR,
                   size: MARGIN_MEDIUM_2X,
                 ),
-                title: CHECK_IN_TEXT,
+                title: "check_in".tr(),
                 tapped: () {
                   print("location tap");
                 },
@@ -239,7 +240,7 @@ class AddNewPostPage extends StatelessWidget {
                   color: LIVE_VIDEO_COLOR,
                   size: MARGIN_MEDIUM_2X,
                 ),
-                title: LIVE_VIDEO_TEXT,
+                title: "live_video".tr(),
                 tapped: () {
                   print("video tap");
                 },
@@ -251,7 +252,7 @@ class AddNewPostPage extends StatelessWidget {
                   color: BACKGROUND_AA_COLOR,
                   size: MARGIN_MEDIUM_2X,
                 ),
-                title: BACKGROUND_COLOR_TEXT,
+                title: "background_color".tr(),
                 tapped: () {
                   print("aa tap");
                 },
@@ -263,7 +264,7 @@ class AddNewPostPage extends StatelessWidget {
                   color: CAMERA_COLOR,
                   size: MARGIN_MEDIUM_2X,
                 ),
-                title: CAMERA_TEXT,
+                title: "camera".tr(),
                 tapped: () {
                   camera();
                 },
@@ -309,9 +310,9 @@ class ErrorShowView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Visibility(
       visible: isError,
-      child: const Text(
-        REQUIRED_TEXT,
-        style: TextStyle(
+      child:  Text(
+        "required_description".tr(),
+        style:const TextStyle(
           fontSize: TEXT_MEDIUM,
           color: Colors.red,
           fontWeight: FontWeight.w500,
@@ -415,7 +416,7 @@ class PostFunctionIconAndTextView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_1, horizontal: MARGIN_MEDIUM_1),
+      padding: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM, horizontal: MARGIN_MEDIUM_1),
       child: GestureDetector(
         onTap: () {
           tapped();
@@ -430,8 +431,9 @@ class PostFunctionIconAndTextView extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
-                  color: COMMENT_TEXT_COLOR,
+                style: TextStyle(
+                  //color: COMMENT_TEXT_COLOR,
+                  color: Theme.of(context).primaryColor,
                   fontSize: TEXT_MEDIUM_1X,
                 ),
               ),
@@ -475,14 +477,15 @@ class PostTextFieldView extends StatelessWidget {
           onChanged(text);
         },
         maxLines: 20,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: TEXT_LARGE_1,
-          color: Colors.black,
+          color: Theme.of(context).primaryColor,
           fontWeight: FontWeight.w400,
         ),
-        decoration: const InputDecoration.collapsed(
-          hintText: WHAT_S_ON_YOUR_MIND_TEXT,
-          hintStyle: TextStyle(
+        decoration: InputDecoration.collapsed(
+          //hintText: WHAT_S_ON_YOUR_MIND_TEXT,
+          hintText: "what_s_on_your_mind".tr(),
+          hintStyle:const TextStyle(
             fontSize: TEXT_LARGE_1,
             color: CONTACT_SEARCH_TEXT_COLOR,
             fontWeight: FontWeight.w400,

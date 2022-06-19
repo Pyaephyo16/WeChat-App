@@ -13,7 +13,7 @@ const String TAG_TEXT = "Tags";
 const String OFFICAL_ACCOUNTS = "Offical\nccounts";
 const String EDIT_TEXT = "EDIT";
 const String LOGOUT_TEXT = "Log Out";
-const String BIO_TEXT =  "The worst of all possible universes and the best of all possible earths.";
+const String BIO_TEXT =  "The worst of all possible universes.";
 const String MOMENT_TEXT = "Moments";
 const String EDIT_POST_TEXT = "Edit Post";
 const String DELETE_POST_TEXT = "Delete Post";
@@ -65,6 +65,7 @@ const String TERMS_OF_SERVICE_SHOW_TEXT = "<<Terms of Service>>";
 const String CHOOSE_REGION_TEXT =  "Choose Region";
 const String QR_SCANNER_TEXT = "QR Scanner";
 const String SCAN_A_CODE_TEXT = "Scan a code";
+
 
 
 const String CONSTANT_IMAGE = "https://i.pinimg.com/564x/1b/14/34/1b1434c7d78bca9e24bcb89e5126903c.jpg";
