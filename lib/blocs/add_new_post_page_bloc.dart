@@ -149,7 +149,7 @@ class AddNewPostPageBloc extends ChangeNotifier{
 
 
   Future<void> addPost(){
-    return model.addNewPost(despController.text,pickedFile,fileType,profileImage);
+    return model.addNewPost(despController.text,pickedFile,fileType,profileImage,loggedInUser?.id.toString() ?? "");
   }
 
 

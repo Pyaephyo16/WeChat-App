@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:we_chat_app/data/vos/comment_vo/comment_vo.dart';
+import 'package:we_chat_app/data/vos/favourite_vo/favourite_vo.dart';
 import 'package:we_chat_app/data/vos/news_feed_vo/news_feed_vo.dart';
 import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/network/we_chat_data_agent.dart';
@@ -11,6 +13,8 @@ const newsFeedCollection = "newsfeed";
 const fileUpload = "uploads";
 const userCollection = "users";
 const contactCollection = "contacts";
+const favouriteCollection = "favourites";
+const commentCollection = "comments";
 
 class CloudNewsFeedDataAgentImpl extends WeChatDataAgent{
 
@@ -173,6 +177,66 @@ class CloudNewsFeedDataAgentImpl extends WeChatDataAgent{
           return UserVO.fromJson(document.data());
         }).toList();
       });
+  }
+
+  ///Favourite
+
+  @override
+  Future<void> addToFavourite(FavouriteVO favourite,String postId) {
+    return cloudFirestore
+      .collection(newsFeedCollection)
+      .doc(postId)
+      .collection(favouriteCollection)
+      .doc(favourite.userId.toString())
+      .set(favourite.toJson());
+  }
+  
+  @override
+  Stream<List<FavouriteVO>> getAllFavourite(String postId) {
+    return cloudFirestore
+      .collection(newsFeedCollection)
+      .doc(postId)
+      .collection(favouriteCollection)
+      .snapshots()
+      .map((querySnapshot){
+        return querySnapshot.docs.map<FavouriteVO>((document){
+          return FavouriteVO.fromJson(document.data());
+        }).toList();
+      });
+  }
+  
+  @override
+  Future<void> removeFavourite(String favouriteId,String postId) {
+    return cloudFirestore
+      .collection(newsFeedCollection)
+      .doc(postId)
+      .collection(favouriteCollection)
+      .doc(favouriteId)
+      .delete();
+  }
+
+  @override
+  Future<void> addComment(String postId, CommentVO comment) {
+    return cloudFirestore
+      .collection(newsFeedCollection)
+      .doc(postId)
+      .collection(commentCollection)
+      .doc(comment.userId.toString())
+      .set(comment.toJson());
+  }
+  
+  @override
+  Stream<List<CommentVO>> getAllComments(String postId) {
+    return cloudFirestore
+    .collection(newsFeedCollection)
+    .doc(postId)
+    .collection(commentCollection)
+    .snapshots()
+    .map((querySnapshot){
+      return querySnapshot.docs.map<CommentVO>((document){
+        return CommentVO.fromJson(document.data());
+      }).toList();
+    });
   }
 
 

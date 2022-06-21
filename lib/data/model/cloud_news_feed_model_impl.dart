@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:we_chat_app/data/model/auth_model.dart';
 import 'package:we_chat_app/data/model/auth_model_impl.dart';
 import 'package:we_chat_app/data/model/we_chat_model.dart';
+import 'package:we_chat_app/data/vos/comment_vo/comment_vo.dart';
+import 'package:we_chat_app/data/vos/favourite_vo/favourite_vo.dart';
 import 'package:we_chat_app/data/vos/news_feed_vo/news_feed_vo.dart';
 import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/network/cloud_news_feed_data_agent_impl.dart';
@@ -21,30 +23,32 @@ class CloudNewsFeedModelImpl extends WeChatModel{
   ///Other Model
   AuthModel authModel = AuthModelImpl();
 
+
   ///Data Agent
   WeChatDataAgent dataAgent = CloudNewsFeedDataAgentImpl();
 
 
   @override
-  Future<void> addNewPost(String description,File? post,String? fileType,String profileImage) {
+  Future<void> addNewPost(String description,File? post,String? fileType,String profileImage,String userId) {
     print("data lyer post check =========> $post");
     print("data layer filetype check =======> $fileType");
       if(post != null && fileType != null){
        return dataAgent
         .uploadFileToFirebaseStorage(post)
-        .then((postUrl) => addPostData(description,postUrl,fileType,profileImage))
+        .then((postUrl) => addPostData(description,postUrl,fileType,profileImage,userId))
         .then((newPost) => dataAgent.addNewPost(newPost));
       }else{
-       return addPostData(description,"","",profileImage)
+       return addPostData(description,"","",profileImage,userId)
         .then((newPost) => dataAgent.addNewPost(newPost),);
       }
   }
 
-  Future<NewsFeedVO> addPostData(String description,String postUrl,String fileType,String profileImage)async{
+  Future<NewsFeedVO> addPostData(String description,String postUrl,String fileType,String profileImage,String userId)async{
     var postId = DateTime.now().millisecondsSinceEpoch;
     var data = await authModel.getLoggedInUser();
     var newPost = NewsFeedVO(
       id: postId,
+      userId: userId,
     description: description,
     fileType: fileType,
     post: postUrl,
@@ -90,6 +94,7 @@ class CloudNewsFeedModelImpl extends WeChatModel{
   Future<NewsFeedVO> changeImageSetupPost(NewsFeedVO editPost,String downlaodUrl){
     var editData = NewsFeedVO(
       id: editPost.id,
+      userId: editPost.userId,
     userName: editPost.userName,
     profileImage: editPost.profileImage,
     fileType: editPost.fileType ?? "",
@@ -114,6 +119,31 @@ class CloudNewsFeedModelImpl extends WeChatModel{
   @override
   Stream<List<UserVO>> getAllContact(String id) {
    return dataAgent.getAllContact(id);
+  }
+
+  @override
+  Future<void> addToFavourite(FavouriteVO favourite, String postId) {
+    return dataAgent.addToFavourite(favourite, postId);
+  }
+  
+  @override
+  Stream<List<FavouriteVO>> getAllFavourite(String postId) {
+    return dataAgent.getAllFavourite(postId);
+  }
+  
+  @override
+  Future<void> removeFavourite(String favouriteId, String postId) {
+    return dataAgent.removeFavourite(favouriteId, postId);
+  }
+
+  @override
+  Future<void> addComment(String postId, CommentVO comment) {
+    return dataAgent.addComment(postId, comment);
+  }
+  
+  @override
+  Stream<List<CommentVO>> getAllComment(String postId) {
+   return dataAgent.getAllComments(postId);
   }
   
 

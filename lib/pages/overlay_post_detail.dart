@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:we_chat_app/data/vos/favourite_vo/favourite_vo.dart';
 import 'package:we_chat_app/data/vos/news_feed_vo/news_feed_vo.dart';
+import 'package:we_chat_app/data/vos/user_vo/user_vo.dart';
 import 'package:we_chat_app/pages/tabs/discover_tab.dart';
 import 'package:we_chat_app/resources/colors.dart';
 import 'package:we_chat_app/resources/dimens.dart';
@@ -70,7 +72,7 @@ class OverlayPostDetail extends ModalRoute{
                     child: PostImageAndDescriptionView(
                       isDetail: true,
                       post: postDetail,
-                      favourite: (){
+                      favourite: (favouriteData){
                       },
                       comment: (){
                       },
