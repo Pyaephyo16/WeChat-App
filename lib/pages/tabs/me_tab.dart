@@ -137,7 +137,7 @@ class LogoutButtonView extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColorLight,
-          borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2),
+          borderRadius: BorderRadius.circular(MARGIN_MEDIUM_2X),
           border: Border.all(color: UNSELECTED_ICON_COLOR),
         ),
         child: Text(

@@ -129,21 +129,16 @@ class DiscoverTabBloc extends ChangeNotifier{
                   posts.favourites = fav;
                   _notifySafely();
                   print("fav check ${posts.id} ===> ${fav}");
-                     if(fav.isNotEmpty){
+                    // if(fav.isNotEmpty){
                       fav.forEach((element){
-                      print("element fav in loop ===> $element");
+                      print("element fav in loop ===> ${element.userId}");
+                       print("loggedInUser Id fav in loop ===> ${value.id}");
                         if(element.userId == value.id){
+                          print("enable true");
                                 posts.isLike = true;
                             _notifySafely();
-                        }else{
-                          posts.isLike = false;
-                          _notifySafely();
                         }
                     });
-                     }else{
-                        posts.isLike = false;
-                        _notifySafely();
-                     }
             });
 
             ///Comment
@@ -162,17 +157,14 @@ class DiscoverTabBloc extends ChangeNotifier{
   }
 
  Future<void> addToFavourite(NewsFeedVO post){
-    bool isRemove = false;
-post.favourites?.forEach((element) {
-            if(element.userId == loggedInUser?.id){
-              isRemove = true;
-            }else{
-              isRemove = false;
-            }
-        });
-  if(isRemove == true){
-     return model.removeFavourite(loggedInUser?.id ?? "",post.id.toString());
-  }else{
+    if(post.isLike == true){
+       print("remove work");
+     return model.removeFavourite(loggedInUser?.id ?? "",post.id.toString()).then((value){
+        post.isLike = false;
+        _notifySafely();
+     });
+    }else{
+    print("add work");
         favourite = FavouriteVO(
       isLike: true,
       postId: post.id.toString(),
@@ -182,13 +174,13 @@ post.favourites?.forEach((element) {
         print("user favourite ======> $loggedInUser");
      print("post id favourite ======> ${post.id}");
    return model.addToFavourite(favourite!,post.id.toString());
-  }
+    }
+
   }
 
 
 
   Future<void> addComment(String text,NewsFeedVO post){
-      //comment = text;
       if(text.isNotEmpty){
         comm = CommentVO(
       comment: text,

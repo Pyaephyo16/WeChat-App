@@ -61,8 +61,12 @@ class DiscoverTab extends StatelessWidget {
           (builder: (BuildContext context,DiscoverTabBloc bloc,child) =>
               AllPostSection(
                 postList: bloc.newsFeedList ?? [],
+                loggedInUser: bloc.loggedInUser ?? UserVO.empty(),
                 postDetail: (postDetail){
-                 Navigator.of(context).push(OverlayPostDetail(postDetail: postDetail));       
+                 Navigator.of(context).push(OverlayPostDetail(
+                  postDetail: postDetail,
+                  loggedInUser: bloc.loggedInUser ?? UserVO.empty(),
+                  ));       
                 },
                 favourite: (post){
                   DiscoverTabBloc dBloc = Provider.of(context,listen: false);
@@ -101,6 +105,7 @@ class AllPostSection extends StatelessWidget {
   final Function(NewsFeedVO) comment;
   final Function(int) editPost;
   final Function(int) deletePost;
+  final UserVO loggedInUser;
 
   AllPostSection({
     required this.postList,
@@ -109,6 +114,7 @@ class AllPostSection extends StatelessWidget {
     required this.comment,
     required this.editPost,
     required this.deletePost,
+    required this.loggedInUser,
   });
 
   @override
@@ -122,6 +128,7 @@ class AllPostSection extends StatelessWidget {
         itemBuilder: (BuildContext context,int index){
           return PostView(
             postList: postList,
+          loggedInUser: loggedInUser,
             index: index,
             postDetail: (){postDetail(postList[index]);},
             favourite: (){ favourite(postList[index]);},
@@ -146,6 +153,7 @@ class AllPostSection extends StatelessWidget {
   final Function editPost;
   final Function deletePost;
   final Function postDetail;
+  final UserVO loggedInUser;
 
    PostView({
      required this.postList,
@@ -155,6 +163,7 @@ class AllPostSection extends StatelessWidget {
      required this.comment,
      required this.editPost,
      required this.deletePost,
+     required this.loggedInUser,
    });
 
   @override
@@ -179,6 +188,7 @@ class AllPostSection extends StatelessWidget {
                     flex: (postList[index].post == "") ? 1 : 2,
                     child: PostImageAndDescriptionView(
                       isDetail: false,
+                      loggedInUser: loggedInUser,
                       post: postList[index],
                       favourite: (){
                         favourite();
@@ -265,7 +275,15 @@ class TextComment extends StatelessWidget {
         ),
        const SizedBox(width: MARGIN_SMALL_1X,),
         Expanded(
-          child: Wrap(
+          child: (userList.comments?.isEmpty ?? true) ? 
+           const Text("no comment yet",
+            style: TextStyle(
+               fontSize: TEXT_MEDIUM,
+                color: CHAT_HEAD_SUBTITLE_COLOR,
+            ),
+            )
+            :
+           Wrap(
             children: userList.comments?.map((user){
               return RichText(
                 maxLines: 3,
@@ -313,7 +331,14 @@ class ReactCommentView extends StatelessWidget {
         ),
        const SizedBox(width: MARGIN_SMALL_1X,),
         Expanded(
-          child: Wrap(
+          child: (userList.favourites?.isEmpty ?? true) ? 
+           const Text("no react yet",
+            style: TextStyle(
+               fontSize: TEXT_MEDIUM,
+                color: CHAT_HEAD_SUBTITLE_COLOR,
+            ),
+            )
+            : Wrap(
             children: userList.favourites?.map((user){
               return Text("${user.userName}, ",
               style: TextStyle(
@@ -339,6 +364,7 @@ class PostImageAndDescriptionView extends StatelessWidget {
     required this.editPost,
     required this.deletePost,
     required this.isDetail,
+    required this.loggedInUser,
   }) : super(key: key);
 
   final NewsFeedVO post;
@@ -347,6 +373,7 @@ class PostImageAndDescriptionView extends StatelessWidget {
   final Function editPost;
   final Function deletePost;
   final bool isDetail;
+  final UserVO loggedInUser;
 
   @override
   Widget build(BuildContext context) {
@@ -373,6 +400,7 @@ class PostImageAndDescriptionView extends StatelessWidget {
            PostImageView(post: post),
            FavouriteAndCommectSection(
             isDetail: isDetail,
+            loggedInUser: loggedInUser,
             post: post,
              favourite: () => favourite(),
              comment: ()=> comment(),
@@ -393,6 +421,7 @@ class FavouriteAndCommectSection extends StatelessWidget {
   final Function deletePost;
   final bool isDetail;
   final NewsFeedVO post;
+  final UserVO loggedInUser;
 
   FavouriteAndCommectSection({
     required this.isDetail,
@@ -401,6 +430,7 @@ class FavouriteAndCommectSection extends StatelessWidget {
     required this.editPost,
     required this.deletePost,
     required this.post,
+   required this.loggedInUser,
   });
 
 
@@ -424,25 +454,29 @@ class FavouriteAndCommectSection extends StatelessWidget {
             comment();
           },
         ),
-        PopupMenuButton(
-          onSelected: (index){
-            if(index == 0){
-             editPost();
-            }else if(index == 1){
-              deletePost();
-            }
-          },
-          icon:Icon(Icons.more_horiz,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              child: Text(EDIT_POST_TEXT),
-              value: 0,
-              ),
+        Visibility(
+          visible: (post.userId == loggedInUser.id) ? true : false,
+          child:
+           PopupMenuButton(
+            onSelected: (index){
+              if(index == 0){
+               editPost();
+              }else if(index == 1){
+                deletePost();
+              }
+            },
+            icon:Icon(Icons.more_horiz,size: MARGIN_SIZE_FOR_ICON,color: UNSELECTED_ICON_COLOR,),
+            itemBuilder: (context) => [
               PopupMenuItem(
-              child: Text(DELETE_POST_TEXT),
-              value: 1,
-              ),
-          ]),
+                child: Text(EDIT_POST_TEXT),
+                value: 0,
+                ),
+                PopupMenuItem(
+                child: Text(DELETE_POST_TEXT),
+                value: 1,
+                ),
+            ]),
+      ),
       ], 
     );
   }

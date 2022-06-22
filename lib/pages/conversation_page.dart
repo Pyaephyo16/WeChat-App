@@ -406,9 +406,10 @@ class TextMsgShowView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                crossAxisAlignment: (isFriend) ? CrossAxisAlignment.start : CrossAxisAlignment.end, 
                 children: [
-                  Center(
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4,),
                     child: Text(
-                        DateFormat().add_jm().format(DateTime.fromMicrosecondsSinceEpoch(int.parse(message[index].timeStamp ?? ""))), 
+                        DateFormat().add_jm().format(DateTime.fromMillisecondsSinceEpoch(int.parse(message[index].timeStamp ?? ""))), 
                         style:const TextStyle(
                     color: Colors.grey,
                     fontSize: TEXT_MEDIUM,

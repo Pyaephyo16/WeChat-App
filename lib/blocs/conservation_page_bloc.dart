@@ -53,7 +53,7 @@ class ConservationPageBloc extends ChangeNotifier{
       print("loggedin user profile ============> ${loggedInUser.profileImage}");
        print("friend user profile ============> ${loggedInUser.profileImage}");
       if(msgController.text.isNotEmpty || pickedFile != null){
-          var time = DateTime.now().microsecondsSinceEpoch;
+          var time = DateTime.now().millisecondsSinceEpoch;
        MessageVO message = MessageVO(
         id: loggedInUser.id,
         timeStamp: time.toString(),

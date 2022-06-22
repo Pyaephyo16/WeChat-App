@@ -197,7 +197,7 @@ class ChatPersonView extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              DateFormat().add_jm().format(DateTime.fromMicrosecondsSinceEpoch(int.parse(user.messages.last.timeStamp ?? ""))),
+              DateFormat().add_jm().format(DateTime.fromMillisecondsSinceEpoch(int.parse(user.messages.last.timeStamp ?? ""))),
               style:const TextStyle(
                 color: Colors.grey,
                 fontSize: 16,

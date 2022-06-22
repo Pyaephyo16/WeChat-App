@@ -13,9 +13,11 @@ import 'package:we_chat_app/view_items/chat_head_view.dart';
 class OverlayPostDetail extends ModalRoute{
 
   final NewsFeedVO postDetail;
+  final UserVO loggedInUser;
 
   OverlayPostDetail({
     required this.postDetail,
+    required this.loggedInUser,
   });
 
   @override
@@ -71,6 +73,7 @@ class OverlayPostDetail extends ModalRoute{
                     flex: (postDetail.post == "") ? 1 : 2,
                     child: PostImageAndDescriptionView(
                       isDetail: true,
+                      loggedInUser: loggedInUser,
                       post: postDetail,
                       favourite: (favouriteData){
                       },
